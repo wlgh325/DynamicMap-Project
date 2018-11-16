@@ -81,30 +81,72 @@ public class ReadExcelfile {
 				            case 2:
 				            	//강의가 두 날에 나누어져 있지 않을때
 				            	if(!value.contains("/")) {
-				            		courseinfo.setday(value.substring(0,1), num);
+				            		String day = value.substring(0,1);	//요일분리
 				            		//목7,8,9 형식일떄
 				            		if(! value.substring(1,2).equals("(") ) {
 					            		String temp = value.substring(1, value.length());	//요일과 시간 분리
 							            String[] temp2 = temp.split(",");	//시간 분리
-							           	courseinfo.setStart_time(temp2[0] + "A", num);	//시작시간
+							            
+							           	courseinfo.setCoursetime(day + temp2[0] + "A", num);	//강의시간
+							           	courseinfo.setTotalTime(Integer.toString(temp2.length), num);	//총 강의시간
 					            	}
 					            	else {	//목(16:00~ 형식 일때)
-					            		String temp = value.substring(2, 7);	//요일과 시간 분리
-						            	String[] temp2 = temp.split(":");	//시간 분리
-						            	String time = changeTime(temp2);
-						            	courseinfo.setStart_time(time, num);	//시작시간
+					            		String start_temp = value.substring(2, 7);	//요일과 시간 분리
+						            	String[] start_time = start_temp.split(":");	//시간 분리
+						            	String time = changeTime(start_time);
+						            	courseinfo.setCoursetime(day + time, num);	//시작시간
+						            	
+						            	//총 강의시간 구하기
+						            	String end_temp = value.substring(8,13);
+						            	String[] end_time = end_temp.split(":");
+						            	int total_time = Integer.parseInt(end_time[0]) - Integer.parseInt(start_time[0]);
+						            	courseinfo.setTotalTime(Integer.toString(total_time), num);
 					            	}
 				            	}
 				            	else {	//강의가 두 날에 나누어져 있을때
-				            		courseinfo.setday(value.substring(0,1), num);
+				            		value = value.replaceAll(" ", "");	//공백 없애기
 				            		String[] temp2 = value.split("/");	//두 날로 나눔
+				            		String course_time = "";
+				            		String day1 = temp2[0].substring(0, 1);	//첫 강의날
+				            		String day2 = temp2[1].substring(0, 1);	//두번째 강의날
 				            		
+				            		course_time += day1;
 				            		//목1,2 / 금1,2
 				            		if(! value.substring(1,2).equals("(")) {
+				            			String day1_time = temp2[0].substring(1, temp2[0].length());	// temp2[0]="목1,2"
+				            			String day2_time = temp2[1].substring(1, temp2[1].length());
+				            			course_time = day1 + day1_time + "A" + "/" + day2 + day2_time + "A";	//목1A / 금1A
 				            			
+				            			courseinfo.setCoursetime(course_time, num);	//시작시간
+				            			
+				            			//총 강의시간 set
+				            			String[] temp_time1 = temp2[0].split(",");
+				            			String[] temp_time2 = temp2[1].split(",");
+				            			
+				            			courseinfo.setTotalTime(Integer.toString(temp_time1.length) + "/" + Integer.toString(temp_time1.length), num);
 				            		}
 				            		else {	//화(15:00~17:00) / 목(15:00~16:00)
+				            			String day1_time = temp2[0].substring(2, 7);
+				            			String[] day1_temp = day1_time.split(":");
+				            			day1_time = changeTime(day1_temp);
 				            			
+				            			String day2_time = temp2[1].substring(2, 7);
+				            			String[] day2_temp = day2_time.split(":");
+				            			day2_time = changeTime(day2_temp);
+				            			course_time = day1 + day1_time + "/" + day2 + day2_time;	//목1A / 금1A
+				            			courseinfo.setCoursetime(course_time, num);	//시작시간
+				            			
+				            			
+				            			//총 강의시간 구하기
+				            			String end_temp = temp2[0].substring(8,13);
+						            	String[] end_time = end_temp.split(":");
+				            			int total_time1 = Integer.parseInt(end_time[0]) - Integer.parseInt(day1_temp[0]);
+				            			
+				            			String end_temp2 = temp2[1].substring(8, 13);
+				            			String[] end_time2 = end_temp2.split(":");
+				            			int total_time2 = Integer.parseInt(end_time2[0]) - Integer.parseInt(day2_temp[0]);
+				            			
+				            			courseinfo.setTotalTime(Integer.toString(total_time1) + "/" + Integer.toString(total_time2), num);
 				            		}
 				            	}	//강의 세날에 나누어져 있을떄는?? 아놔...
 				            	break;
