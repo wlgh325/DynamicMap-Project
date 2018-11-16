@@ -1,16 +1,21 @@
 public class CourseInfo {
-	static final int COURSE_NUM = 5504;	//강의 개수
+	
+	static final int COURSE_NUM = 100;	//
 	private String[] course_name;
 	private String[] day;
-	private int[] course_start_time;
+	private String[] course_start_time;
 	private String[] location;
+	private String[] code;
+	private String[] class_num;
 	
 	/* Constructor */
 	CourseInfo() {
 		this.course_name = new String[COURSE_NUM];
 		this.day = new String[COURSE_NUM];
-		this.course_start_time = new int[COURSE_NUM];
+		this.course_start_time = new String[COURSE_NUM];
 		this.location = new String[COURSE_NUM];
+		this.code = new String[COURSE_NUM];
+		this.class_num = new String[COURSE_NUM];
 	}
 
 	/*   set method   */
@@ -20,24 +25,40 @@ public class CourseInfo {
 	public void setday(String day, int n) {
 		this.day[n] = day;
 	}
-	public void setStart_time(int start_time, int n) {
+	public void setStart_time(String start_time, int n) {
 		this.course_start_time[n] = start_time;
 	}
 	public void setLocation(String location, int n) {
 		this.location[n] = location;
 	}
 	
+	public void setCode(String code, int n) {
+		this.code[n] = code;
+	}
+	
+	public void setClassnum(String class_num, int n) {
+		this.class_num[n] = class_num;
+	}
+	
 	/*   get method   */
-	public String getCourse_name(int n) {
-		return course_name[n];
+	public String[] getCourse_name() {
+		return course_name;
 	}
-	public String getday(int n) {
-		return day[n];
+	public String[] getday() {
+		return day;
 	}
-	public int getStart_time(int n) {
-		return course_start_time[n];
+	public String[] getStart_time() {
+		return course_start_time;
 	}
-	public String getLocation(int n) {
-		return location[n];
+	public String[] getLocation() {
+		return location;
+	}
+	
+	public String[] getCode() {
+		return code;
+	}
+	
+	public String[] getClassnum(){
+		return class_num;
 	}
 }

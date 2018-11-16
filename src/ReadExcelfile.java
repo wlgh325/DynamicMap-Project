@@ -13,16 +13,17 @@ public class ReadExcelfile {
 	// Constructor
 	ReadExcelfile(){
 		this.courseinfo = new CourseInfo();
-		this.path = "C:\\Users\\Guest1\\eclipse-workspace\\src\\application\\CourseList.xls";
+		this.path = "C:\\Users\\jiho\\eclipse-workspace\\Course\\src\\CourseList.xls";
 	}
 	
 	public void readExcel(String str) throws IOException{
 		FileInputStream fis=new FileInputStream(path);
 		HSSFWorkbook workbook=new HSSFWorkbook(fis);
-		
+
 		int rowindex=0;
 		int columnindex=0;
 		int num =0;
+		int check;	//과목명이 같은지 확인(False:0, True:1)
 		
 		for(int i=0; i<workbook.getNumberOfSheets(); i++) {
 			HSSFSheet sheet = workbook.getSheetAt(i);	//sheet 생성
@@ -32,6 +33,7 @@ public class ReadExcelfile {
 			for(rowindex=1;rowindex<rows;rowindex++){
 			    //행을 읽는다
 			    HSSFRow row=sheet.getRow(rowindex);
+			    check=0;
 			    if(row !=null){
 			        //셀의 수
 			        int cells=row.getPhysicalNumberOfCells();
@@ -67,46 +69,143 @@ public class ReadExcelfile {
 			            //set courseInfo
 			            
 			            //value와 str이 같을때 정보를 저장하고 보여준다
-			            if(value.equals(str)) {
-				            switch (columnindex % 7) {
-				            case 4:
+			            if(value.contains(str) || check==1) {
+			            	check=1;
+				            switch (columnindex % 5) {
+				            case 0:
 				            	courseinfo.setCourse_name(value, num);
 				            	break;
-				            case 5:
+				            case 1:
 				            	courseinfo.setLocation(value, num);
 				            	break;
-				            case 6:
-				            	System.out.println(value.substring(0));
-				            	courseinfo.setday(value.substring(0), num);
-				            	
-				            	String temp = value.substring(1, value.length()-1);
-				            	String[] temp2 = value.split(",");
-				            	courseinfo.setStart_time(Integer.parseInt(temp2[0]), num);
+				            case 2:
+				            	//강의가 두 날에 나누어져 있지 않을때
+				            	if(!value.contains("/")) {
+				            		courseinfo.setday(value.substring(0,1), num);
+				            		//목7,8,9 형식일떄
+				            		if(! value.substring(1,2).equals("(") ) {
+					            		String temp = value.substring(1, value.length());	//요일과 시간 분리
+							            String[] temp2 = temp.split(",");	//시간 분리
+							           	courseinfo.setStart_time(temp2[0] + "A", num);	//시작시간
+					            	}
+					            	else {	//목(16:00~ 형식 일때)
+					            		String temp = value.substring(2, 7);	//요일과 시간 분리
+						            	String[] temp2 = temp.split(":");	//시간 분리
+						            	String time = changeTime(temp2);
+						            	courseinfo.setStart_time(time, num);	//시작시간
+					            	}
+				            	}
+				            	else {	//강의가 두 날에 나누어져 있을때
+				            		courseinfo.setday(value.substring(0,1), num);
+				            		String[] temp2 = value.split("/");	//두 날로 나눔
+				            		
+				            		//목1,2 / 금1,2
+				            		if(! value.substring(1,2).equals("(")) {
+				            			
+				            		}
+				            		else {	//화(15:00~17:00) / 목(15:00~16:00)
+				            			
+				            		}
+				            	}	//강의 세날에 나누어져 있을떄는?? 아놔...
 				            	break;
+				            case 3:
+				            	courseinfo.setCode(value, num);
+				            	break;
+				            case 4:
+				            	courseinfo.setClassnum(value, num);
+				            	num++;
 				            }	//end of switch
-			            }
+				        
+			            }// end of if
+			            else
+			            	break;
 			        }	//end of for loop
 			        
 			        }	//end of if
-		        num++;
+		        
 			}	//end of for loop
 		}
 				
-		print_Course(courseinfo);
-	}
-	
-	//print
-	public void print_Course(CourseInfo courseinfo) {	
-		for(int i=0; i<courseinfo.COURSE_NUM; i++) {
-		   	System.out.println("강의명 : "+ courseinfo.getCourse_name(i));
-		   	System.out.println("장소 : "+ courseinfo.getLocation(i));
-		   	System.out.println("요일 : "+ courseinfo.getday(i));
-		   	System.out.println("시작시간 : "+ courseinfo.getStart_time(i));
-		   	System.out.println();
-		}
 	}
 	
 	public CourseInfo getCourseInfo() {
 		return this.courseinfo;
+	}
+	
+	//시간을 교시로 변환
+	public String changeTime(String[] temp) {
+		String time="";
+		
+		switch(temp[0]) {
+		case "08":
+			time="0";
+			time+=changeTime2(temp[1]);
+			break;
+		case "09":
+			time="1";
+			time+=changeTime2(temp[1]);
+			break;
+		case "10":
+			time="2";
+			time+=changeTime2(temp[1]);
+			break;
+		case "11":
+			time="3";
+			time+=changeTime2(temp[1]);
+			break;
+		case "12":
+			time="4";
+			time+=changeTime2(temp[1]);
+			break;
+		case "13":
+			time="5";
+			time+=changeTime2(temp[1]);
+			break;
+		case "14":
+			time="6";
+			time+=changeTime2(temp[1]);
+			break;
+		case "15":
+			time="7";
+			time+=changeTime2(temp[1]);
+			break;
+		case "16":
+			time="8";
+			time+=changeTime2(temp[1]);
+			break;
+		case "17":
+			time="9";
+			time+=changeTime2(temp[1]);
+			break;
+		case "18":
+			time="10";
+			time+=changeTime2(temp[1]);
+			break;
+		case "19":
+			time="11";
+			time+=changeTime2(temp[1]);
+			break;
+		case "20":
+			time="12";
+			time+=changeTime2(temp[1]);
+			break;
+		case "21":
+			time="13";
+			time+=changeTime2(temp[1]);
+		}
+		return time;
+	}
+	
+	//0~29분은 A 30~59분은 B로 변환한다
+	public String changeTime2(String temp) {
+		String time="";
+		int min = Integer.parseInt(temp);
+		
+		if(min >=0 && min <30)
+			time = "A";
+		else
+			time = "B";
+		
+		return time;
 	}
 }
