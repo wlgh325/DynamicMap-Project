@@ -6,6 +6,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
+
 public class ReadExcelfile {
 	private CourseInfo courseinfo;
 	private String path;
@@ -13,7 +14,7 @@ public class ReadExcelfile {
 	// Constructor
 	ReadExcelfile(){
 		this.courseinfo = new CourseInfo();
-		this.path = "C:\\Users\\jiho\\eclipse-workspace\\Course\\src\\CourseList.xls";
+		this.path = "C:\\Users\\Guest1\\eclipse-workspace\\Course_swing\\CourseList.xls";
 	}
 	
 	public void readExcel(String str) throws IOException{
@@ -23,29 +24,29 @@ public class ReadExcelfile {
 		int rowindex=0;
 		int columnindex=0;
 		int num =0;
-		int check;	//°ú¸ñ¸íÀÌ °°ÀºÁö È®ÀÎ(False:0, True:1)
+		int check;	//ê³¼ëª©ëª…ì´ ê°™ì€ì§€ í™•ì¸(False:0, True:1)
 		
 		for(int i=0; i<workbook.getNumberOfSheets(); i++) {
-			HSSFSheet sheet = workbook.getSheetAt(i);	//sheet »ı¼º
+			HSSFSheet sheet = workbook.getSheetAt(i);	//sheet ìƒì„±
 			
-			//ÇàÀÇ ¼ö
+			//í–‰ì˜ ìˆ˜
 			int rows=sheet.getPhysicalNumberOfRows();
 			for(rowindex=1;rowindex<rows;rowindex++){
-			    //ÇàÀ» ÀĞ´Â´Ù
+			    //í–‰ì„ ì½ëŠ”ë‹¤
 			    HSSFRow row=sheet.getRow(rowindex);
 			    check=0;
 			    if(row !=null){
-			        //¼¿ÀÇ ¼ö
+			        //ì…€ì˜ ìˆ˜
 			        int cells=row.getPhysicalNumberOfCells();
 			        for(columnindex=0;columnindex<=cells;columnindex++){
-			            //¼¿°ªÀ» ÀĞ´Â´Ù
+			            //ì…€ê°’ì„ ì½ëŠ”ë‹¤
 			            HSSFCell cell= sheet.getRow(rowindex).getCell((short)columnindex);
 			            String value="";
-			            //¼¿ÀÌ ºó°ªÀÏ°æ¿ì¸¦ À§ÇÑ ³ÎÃ¼Å©
+			            //ì…€ì´ ë¹ˆê°’ì¼ê²½ìš°ë¥¼ ìœ„í•œ ë„ì²´í¬
 			            if(cell==null){
 			                continue;
 			            }else{
-			                //Å¸ÀÔº°·Î ³»¿ë ÀĞ±â
+			                //íƒ€ì…ë³„ë¡œ ë‚´ìš© ì½ê¸°
 			                switch (cell.getCellType()){
 			                case HSSFCell.CELL_TYPE_FORMULA:
 			                    value=cell.getCellFormula();
@@ -68,8 +69,9 @@ public class ReadExcelfile {
 			            //Integer.parseInt(value)
 			            //set courseInfo
 			            
-			            //value¿Í strÀÌ °°À»¶§ Á¤º¸¸¦ ÀúÀåÇÏ°í º¸¿©ÁØ´Ù
+			            //valueì™€ strì´ ê°™ì„ë•Œ ì •ë³´ë¥¼ ì €ì¥í•˜ê³  ë³´ì—¬ì¤€ë‹¤
 			            if(value.contains(str) || check==1) {
+			            	
 			            	check=1;
 				            switch (columnindex % 5) {
 				            case 0:
@@ -79,53 +81,53 @@ public class ReadExcelfile {
 				            	courseinfo.setLocation(value, num);
 				            	break;
 				            case 2:
-				            	//°­ÀÇ°¡ µÎ ³¯¿¡ ³ª´©¾îÁ® ÀÖÁö ¾ÊÀ»¶§
+				            	//ê°•ì˜ê°€ ë‘ ë‚ ì— ë‚˜ëˆ„ì–´ì ¸ ìˆì§€ ì•Šì„ë•Œ
 				            	if(!value.contains("/")) {
-				            		String day = value.substring(0,1);	//¿äÀÏºĞ¸®
-				            		//¸ñ7,8,9 Çü½ÄÀÏ‹š
+				            		String day = value.substring(0,1);	//ìš”ì¼ë¶„ë¦¬
+				            		//ëª©7,8,9 í˜•ì‹ì¼Â‹Âš
 				            		if(! value.substring(1,2).equals("(") ) {
-					            		String temp = value.substring(1, value.length());	//¿äÀÏ°ú ½Ã°£ ºĞ¸®
-							            String[] temp2 = temp.split(",");	//½Ã°£ ºĞ¸®
+					            		String temp = value.substring(1, value.length());	//ìš”ì¼ê³¼ ì‹œê°„ ë¶„ë¦¬
+							            String[] temp2 = temp.split(",");	//ì‹œê°„ ë¶„ë¦¬
 							            
-							           	courseinfo.setCoursetime(day + temp2[0] + "A", num);	//°­ÀÇ½Ã°£
-							           	courseinfo.setTotalTime(Integer.toString(temp2.length), num);	//ÃÑ °­ÀÇ½Ã°£
+							           	courseinfo.setCoursetime(day + temp2[0] + "A", num);	//ê°•ì˜ì‹œê°„
+							           	courseinfo.setTotalTime(Integer.toString(temp2.length), num);	//ì´ ê°•ì˜ì‹œê°„
 					            	}
-					            	else {	//¸ñ(16:00~ Çü½Ä ÀÏ¶§)
-					            		String start_temp = value.substring(2, 7);	//¿äÀÏ°ú ½Ã°£ ºĞ¸®
-						            	String[] start_time = start_temp.split(":");	//½Ã°£ ºĞ¸®
+					            	else {	//ëª©(16:00~ í˜•ì‹ ì¼ë•Œ)
+					            		String start_temp = value.substring(2, 7);	//ìš”ì¼ê³¼ ì‹œê°„ ë¶„ë¦¬
+						            	String[] start_time = start_temp.split(":");	//ì‹œê°„ ë¶„ë¦¬
 						            	String time = changeTime(start_time);
-						            	courseinfo.setCoursetime(day + time, num);	//½ÃÀÛ½Ã°£
+						            	courseinfo.setCoursetime(day + time, num);	//ì‹œì‘ì‹œê°„
 						            	
-						            	//ÃÑ °­ÀÇ½Ã°£ ±¸ÇÏ±â
+						            	//ì´ ê°•ì˜ì‹œê°„ êµ¬í•˜ê¸°
 						            	String end_temp = value.substring(8,13);
 						            	String[] end_time = end_temp.split(":");
 						            	int total_time = Integer.parseInt(end_time[0]) - Integer.parseInt(start_time[0]);
 						            	courseinfo.setTotalTime(Integer.toString(total_time), num);
 					            	}
 				            	}
-				            	else {	//°­ÀÇ°¡ µÎ ³¯¿¡ ³ª´©¾îÁ® ÀÖÀ»¶§
-				            		value = value.replaceAll(" ", "");	//°ø¹é ¾ø¾Ö±â
-				            		String[] temp2 = value.split("/");	//µÎ ³¯·Î ³ª´®
+				            	else {	//ê°•ì˜ê°€ ë‘ ë‚ ì— ë‚˜ëˆ„ì–´ì ¸ ìˆì„ë•Œ
+				            		value = value.replaceAll(" ", "");	//ê³µë°± ì—†ì• ê¸°
+				            		String[] temp2 = value.split("/");	//ë‘ ë‚ ë¡œ ë‚˜ëˆ”
 				            		String course_time = "";
-				            		String day1 = temp2[0].substring(0, 1);	//Ã¹ °­ÀÇ³¯
-				            		String day2 = temp2[1].substring(0, 1);	//µÎ¹øÂ° °­ÀÇ³¯
+				            		String day1 = temp2[0].substring(0, 1);	//ì²« ê°•ì˜ë‚ 
+				            		String day2 = temp2[1].substring(0, 1);	//ë‘ë²ˆì§¸ ê°•ì˜ë‚ 
 				            		
 				            		course_time += day1;
-				            		//¸ñ1,2 / ±İ1,2
+				            		//ëª©1,2 / ê¸ˆ1,2
 				            		if(! value.substring(1,2).equals("(")) {
-				            			String day1_time = temp2[0].substring(1, temp2[0].length());	// temp2[0]="¸ñ1,2"
+				            			String day1_time = temp2[0].substring(1, temp2[0].length());	// temp2[0]="ëª©1,2"
 				            			String day2_time = temp2[1].substring(1, temp2[1].length());
-				            			course_time = day1 + day1_time + "A" + "/" + day2 + day2_time + "A";	//¸ñ1A / ±İ1A
+				            			course_time = day1 + day1_time + "A" + "/" + day2 + day2_time + "A";	//ëª©1A / ê¸ˆ1A
 				            			
-				            			courseinfo.setCoursetime(course_time, num);	//½ÃÀÛ½Ã°£
+				            			courseinfo.setCoursetime(course_time, num);	//ì‹œì‘ì‹œê°„
 				            			
-				            			//ÃÑ °­ÀÇ½Ã°£ set
+				            			//ì´ ê°•ì˜ì‹œê°„ set
 				            			String[] temp_time1 = temp2[0].split(",");
 				            			String[] temp_time2 = temp2[1].split(",");
 				            			
 				            			courseinfo.setTotalTime(Integer.toString(temp_time1.length) + "/" + Integer.toString(temp_time1.length), num);
 				            		}
-				            		else {	//È­(15:00~17:00) / ¸ñ(15:00~16:00)
+				            		else {	//í™”(15:00~17:00) / ëª©(15:00~16:00)
 				            			String day1_time = temp2[0].substring(2, 7);
 				            			String[] day1_temp = day1_time.split(":");
 				            			day1_time = changeTime(day1_temp);
@@ -133,11 +135,11 @@ public class ReadExcelfile {
 				            			String day2_time = temp2[1].substring(2, 7);
 				            			String[] day2_temp = day2_time.split(":");
 				            			day2_time = changeTime(day2_temp);
-				            			course_time = day1 + day1_time + "/" + day2 + day2_time;	//¸ñ1A / ±İ1A
-				            			courseinfo.setCoursetime(course_time, num);	//½ÃÀÛ½Ã°£
+				            			course_time = day1 + day1_time + "/" + day2 + day2_time;	//ëª©1A / ê¸ˆ1A
+				            			courseinfo.setCoursetime(course_time, num);	//ì‹œì‘ì‹œê°„
 				            			
 				            			
-				            			//ÃÑ °­ÀÇ½Ã°£ ±¸ÇÏ±â
+				            			//ì´ ê°•ì˜ì‹œê°„ êµ¬í•˜ê¸°
 				            			String end_temp = temp2[0].substring(8,13);
 						            	String[] end_time = end_temp.split(":");
 				            			int total_time1 = Integer.parseInt(end_time[0]) - Integer.parseInt(day1_temp[0]);
@@ -148,7 +150,7 @@ public class ReadExcelfile {
 				            			
 				            			courseinfo.setTotalTime(Integer.toString(total_time1) + "/" + Integer.toString(total_time2), num);
 				            		}
-				            	}	//°­ÀÇ ¼¼³¯¿¡ ³ª´©¾îÁ® ÀÖÀ»‹š´Â?? ¾Æ³ö...
+				            	}	//ê°•ì˜ ì„¸ë‚ ì— ë‚˜ëˆ„ì–´ì ¸ ìˆì„Â‹ÂšëŠ”?? ì•„ë†”...
 				            	break;
 				            case 3:
 				            	courseinfo.setCode(value, num);
@@ -174,7 +176,7 @@ public class ReadExcelfile {
 		return this.courseinfo;
 	}
 	
-	//½Ã°£À» ±³½Ã·Î º¯È¯
+	//ì‹œê°„ì„ êµì‹œë¡œ ë³€í™˜
 	public String changeTime(String[] temp) {
 		String time="";
 		
@@ -238,7 +240,7 @@ public class ReadExcelfile {
 		return time;
 	}
 	
-	//0~29ºĞÀº A 30~59ºĞÀº B·Î º¯È¯ÇÑ´Ù
+	//0~29ë¶„ì€ A 30~59ë¶„ì€ Bë¡œ ë³€í™˜í•œë‹¤
 	public String changeTime2(String temp) {
 		String time="";
 		int min = Integer.parseInt(temp);
