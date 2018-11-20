@@ -89,7 +89,10 @@ public class ReadExcelfile {
 					            		String temp = value.substring(1, value.length());	//요일과 시간 분리
 							            String[] temp2 = temp.split(",");	//시간 분리
 							            
-							           	courseinfo.setCoursetime(day + temp2[0] + "A", num);	//강의시간
+							            if( !temp2[0].equals("0"))
+							            	courseinfo.setCoursetime(day + temp2[0] + "A", num);	//강의시간
+							            else	//0교시는 A와 B로 시간을 분리하지 않음
+							            	courseinfo.setCoursetime(day + temp2[0], num);
 							           	courseinfo.setTotalTime(Integer.toString(temp2.length), num);	//총 강의시간
 					            	}
 					            	else {	//목(16:00~ 형식 일때)
@@ -117,15 +120,17 @@ public class ReadExcelfile {
 				            		if(! value.substring(1,2).equals("(")) {
 				            			String day1_time = temp2[0].substring(1, temp2[0].length());	// temp2[0]="목1,2"
 				            			String day2_time = temp2[1].substring(1, temp2[1].length());
-				            			course_time = day1 + day1_time + "A" + "/" + day2 + day2_time + "A";	//목1A / 금1A
+				             			
+				            			String[] temp_time1 = day1_time.split(",");
+				            			String[] temp_time2 = day2_time.split(",");
 				            			
+				            			course_time = day1 + temp_time1[0] + "A" + "/" + day2 + temp_time2[0] + "A";	//목1A / 금1A
+				            			
+				            			//강의 요일
 				            			courseinfo.setCoursetime(course_time, num);	//시작시간
 				            			
 				            			//총 강의시간 set
-				            			String[] temp_time1 = temp2[0].split(",");
-				            			String[] temp_time2 = temp2[1].split(",");
-				            			
-				            			courseinfo.setTotalTime(Integer.toString(temp_time1.length) + "/" + Integer.toString(temp_time1.length), num);
+				            			courseinfo.setTotalTime(Integer.toString(temp_time1.length) + "/" + Integer.toString(temp_time2.length), num);
 				            		}
 				            		else {	//화(15:00~17:00) / 목(15:00~16:00)
 				            			String day1_time = temp2[0].substring(2, 7);

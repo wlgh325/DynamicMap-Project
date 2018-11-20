@@ -179,7 +179,7 @@ public class Frame extends JFrame{
 				//검색목록 출력
 				
 				//새로 목록 출력하기
-				//course_nameBox.removeAllItems();
+				course_nameBox.removeAllItems();
 				
 				//comboBox 값 넣기
 				for(int i=0; i<searchContents.length; i++) {
@@ -206,19 +206,19 @@ public class Frame extends JFrame{
             		for(int i=0; i<selectedItem.length; i++) {
 	            		switch(selectedItem[i].charAt(0)) {
 	            			case '월':
-	            				setCourseSchedule(time, selectedItem, selectedIndex, 1,i);
+	            				setCourseSchedule(time, selectedItem[i], selectedIndex, 1,i);
 	            				break;
 	            			case '화':
-	            				setCourseSchedule(time, selectedItem, selectedIndex, 2,i);
+	            				setCourseSchedule(time, selectedItem[i], selectedIndex, 2,i);
 	            				break;
 	                    	case '수':
-	                    		setCourseSchedule(time, selectedItem, selectedIndex, 3,i);
+	                    		setCourseSchedule(time, selectedItem[i], selectedIndex, 3,i);
 	                    		break;
 	            			case '목':
-	            				setCourseSchedule(time, selectedItem, selectedIndex, 4,i);
+	            				setCourseSchedule(time, selectedItem[i], selectedIndex, 4,i);
 	            				break;
 	            			case '금':
-	            				setCourseSchedule(time, selectedItem, selectedIndex, 5,i);
+	            				setCourseSchedule(time, selectedItem[i], selectedIndex, 5,i);
 	            			}
             		}
             	}catch(Exception ie){
@@ -249,28 +249,29 @@ public class Frame extends JFrame{
 		int length = searchName.length;
 		searchContents = new String[length];
 		
+		
 		//비어있는 배열(null) 전까지만 값 넣기
 		for(int i=0; !(searchName[i] == null || searchName[i].length() == 0); i++) {
 			searchContents[i] = searchName[i] + "  " + searchLocation[i] + "  " + searchTime[i];
 		}
 	}
 	
-	public void setCourseSchedule(Object[] time, String[] selectedItem, int selectedIndex, int columnIndex, int i) {
+	public void setCourseSchedule(Object[] time, String selectedItem, int selectedIndex, int columnIndex, int i) {
 		int course_time_index;
 		//몇시의 강의인지 찾기
 		for(course_time_index=0; course_time_index < time.length; course_time_index++) {
-			if(time[course_time_index].equals(selectedItem[0].substring(1,3)) ) {
+			if(time[course_time_index].equals(selectedItem.substring(1,selectedItem.length())) ) {
 				break;
 			}
 		}
 		
 		String[] tempTotalTime = searchTotalTime[selectedIndex].split("/");
 		
-		for(int j=course_time_index; j< course_time_index + Integer.parseInt(tempTotalTime[i]); j++) {
-			//column[j] =searchName[selectedIndex];
+		for(int j=course_time_index; j< course_time_index + (Integer.parseInt(tempTotalTime[i]) * 2); j++) {
+			
 			if(add_model.getValueAt(j, columnIndex) == null || add_model.getValueAt(j, columnIndex).toString().length() == 0)
 				add_model.setValueAt(searchName[selectedIndex], j, columnIndex);
-			else {
+			else { 
 				JOptionPane.showMessageDialog(null, "이미 중복되는 시간에 강의가 있습니다");
 				break;
 			}	
