@@ -4,6 +4,8 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.IOException;
 
 import javax.swing.JButton;
@@ -19,7 +21,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 
-public class Frame extends JFrame{
+public class Frame extends JFrame implements MouseListener{
 	private CourseInfo courseinfo;
 	private String[] searchName;
 	private String[] searchLocation;
@@ -228,7 +230,7 @@ public class Frame extends JFrame{
             	
             }
         });
-		
+		table.addMouseListener(this);
 		
 		Container contentPane = this.getContentPane();
 		contentPane.add(p6, BorderLayout.CENTER);
@@ -288,6 +290,38 @@ public class Frame extends JFrame{
     	add_model.addColumn(colname[4], thr_column);	//목
     	add_model.addColumn(colname[5], fri_column);	//금
     	
+	}
+	
+	/* Jtable click listener */
+	public void mouseClicked(MouseEvent me) {
+		int row = table.getSelectedRow();
+		int column = table.getSelectedColumn();
+		System.out.println(row + "행 " + column + "열");
+		PrintMap printMap = new PrintMap();
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }
 
