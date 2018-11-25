@@ -1,0 +1,30 @@
+4주차 회의록
+
+<<11.23(금) 회의록>>
+11.24(목) 310관 도면 획득
+
+남은 과제
+
+- 노드간 거리 데이터 수집
+  >> COMPLETE
+- 거리 데이터 그래프에 적용
+  >> COMPLETE
+- 엘리베이터 효율적 운행 시뮬레이션
+  >>IN PROGRESS
+- User Interface
+  >>IN PROGRESS
+
+그래프 생성 디버깅.. 그래프 생성 완료
+엣지 weight 적용
+
+엘리베이터 효율적 운행 시뮬레이션
+ magic time에 적절한 x,y,z 값 찾는 stage
+ 최소 시간에 인원들을 운반하는 event
+ z 값은 크게 고려 x 
+ --> 그러한 x,y 값을 찾기 위해 딥러닝 활용
+ 
+User Interface
+ 프로젝트 텍스트 결과물 --> processing으로 변환
+ 시작 노드가 601호라면 6층 image를 load 하여 엘리베이터나 계단까지 선으로 나타내고 
+ 다음 층 image를 load하여 목적지까지 선으로 인도.
+
