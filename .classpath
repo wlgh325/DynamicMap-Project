@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="Graph"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="courseParsing/poi-3.0-rc4-20070503.jar"/>
+	<classpathentry kind="lib" path="courseParsing/poi-contrib-3.0-rc4-20070503.jar"/>
+	<classpathentry kind="lib" path="courseParsing/poi-examples-4.0.0.jar"/>
+	<classpathentry kind="lib" path="courseParsing/poi-excelant-4.0.0.jar"/>
+	<classpathentry kind="lib" path="courseParsing/poi-ooxml-4.0.0.jar"/>
+	<classpathentry kind="lib" path="courseParsing/poi-ooxml-schemas-4.0.0.jar"/>
+	<classpathentry kind="lib" path="courseParsing/poi-scratchpad-3.0-rc4-20070503.jar"/>
+	<classpathentry kind="lib" path="jfxrt.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

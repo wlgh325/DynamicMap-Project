@@ -12,6 +12,7 @@ public class Graph {
    private final static int MAX_N = 17;
    private final static int MAX_S = 5;
    private final static int MAX_E = 4;
+   private final static int MAX_C = 3;
    private Floor floorHead; //
    private Floor floorTail;
    private int size = 0;
@@ -34,13 +35,13 @@ public class Graph {
       private boolean[] N = new boolean[MAX_N]; // 각 원소가 true라면 이미 생성되어 있는 node라는 소리이다. 없으면 false
       private boolean[] S = new boolean[MAX_S]; // 각 원소가 true라면 이미 생성되어 있는 node라는 소리이다. 없으면 false
       private boolean[] E = new boolean[MAX_E]; // 각 원소가 true라면 이미 생성되어 있는 node라는 소리이다. 없으면 false
+      private boolean[] C = new boolean[MAX_C];
       // 생성자
 
       public Floor(int floor) {
          this.floor = floor;
          for (int i = 0; i < MAX_N; i++) { // 처음 이 층이 생성되면 모든 노드는 없으므로, 모두 false로 초기화
             N[i] = false;
-
          }
          for (int i = 0; i < MAX_S; i++) { // 처음 이 층이 생성되면 모든 노드는 없으므로, 모두 false로 초기화
             S[i] = false;
@@ -48,6 +49,9 @@ public class Graph {
          for (int i = 0; i < MAX_E; i++) { // 처음 이 층이 생성되면 모든 노드는 없으므로, 모두 false로 초기화
             E[i] = false;
          }
+         for (int i = 0; i < MAX_C; i++) { // 처음 이 층이 생성되면 모든 노드는 없으므로, 모두 false로 초기화
+             C[i] = false;
+          }
       }
 
       private class Node {
@@ -83,7 +87,7 @@ public class Graph {
             newNode.room = Arrays.copyOf(nearRoom, nearRoom.length); // 파일에서 읽어온 인접강의실을 배열에 저장한다.
             newNode.distance = new float[nearRoom.length]; // distance의 배열의 숫자를 파일에서 일어온 room의 갯수로 초기화한다.
             for (int i = 0; i < newNode.distance.length; i++) { // 임의로 거리를 초기화한다. 나중에 바꿔야한다.%%%
-               newNode.distance[i] = i;
+               newNode.distance[i] = 0;
             }
          }
          // 인접한 node를 생성하고 리스트형태로 이어준다.
@@ -95,11 +99,11 @@ public class Graph {
                                                                                  // 생성한다.
             changeExistArray(nearNode[i].charAt(0), Integer.parseInt(nearNode[i].substring(1)));
             // new node ->인접node 연결한다.
-            newNode.distanceNode.add((float) i); // newNode에 temp에 대한 정보를 넣어준다.
+            newNode.distanceNode.add((float) 0); // newNode에 temp에 대한 정보를 넣어준다.
             newNode.nearNode.add(temp);// 인접 노드들을 arraylist에 추가한다.
             // 인접 node 에서 newnode로 넣어준다.
             // String temp2 = newNode.distinction + newNode.number +"";
-            temp.distanceNode.add((float) i); // temp에 newNode에 대한 정보를 넣어준다.
+            temp.distanceNode.add((float) 0); // temp에 newNode에 대한 정보를 넣어준다.
             temp.nearNode.add(newNode); // 양방향으로 이어줘야 하므로 다시 temp에서 newNode로 이어주게한다.
 
             nodeSize++;
@@ -127,11 +131,11 @@ public class Graph {
                                                                                  // 생성한다.
             changeExistArray(nearNode[i].charAt(0), Integer.parseInt(nearNode[i].substring(1)));
             // new node ->인접node 연결한다.
-            newNode.distanceNode.add((float) i); // newNode에 temp에 대한 정보를 넣어준다.
+            newNode.distanceNode.add((float) 0); // newNode에 temp에 대한 정보를 넣어준다.
             newNode.nearNode.add(temp);// 인접 노드들을 arraylist에 추가한다.
             // 인접 node 에서 newnode로 넣어준다.
             // String temp2 = newNode.distinction + newNode.number +"";
-            temp.distanceNode.add((float) i); // temp에 newNode에 대한 정보를 넣어준다.
+            temp.distanceNode.add((float) 0); // temp에 newNode에 대한 정보를 넣어준다.
             temp.nearNode.add(newNode); // 양방향으로 이어줘야 하므로 다시 temp에서 newNode로 이어주게한다.
 
             nodeSize++;
@@ -148,7 +152,7 @@ public class Graph {
                thisNode.room = Arrays.copyOf(nearRoom, nearRoom.length);
                thisNode.distance = new float[nearRoom.length];
                for (int i = 0; i < thisNode.distance.length; i++) { // 임의로 거리를 초기화한다. 나중에 바꿔야한다.%%%
-                  thisNode.distance[i] = i;
+                  thisNode.distance[i] = (float)0;
                }
             }
             // 인접한 node를 생성하고 리스트형태로 이어준다.
@@ -162,10 +166,10 @@ public class Graph {
                   {
                      // this -> 인접 node로 연결
                      Node temp = getNode(nearNode[i].charAt(0),Integer.parseInt(nearNode[i].substring(1))); // 인접 node를 temp라 지정
-                     thisNode.distanceNode.add((float) i); // thisNode에 temp에 대한 거리정보를 넣어준다.
+                     thisNode.distanceNode.add((float) 0); // thisNode에 temp에 대한 거리정보를 넣어준다.
                      thisNode.nearNode.add(temp);// 인접 node들을 arraylist에 추가한다.
                      // 인접 node에서 this로 연결
-                     temp.distanceNode.add((float) i);
+                     temp.distanceNode.add((float) 0);
                      temp.nearNode.add(thisNode);
                   }
                } else // graph에 인접행렬이 없다면 node를 생성하고, 연결한다.
@@ -176,10 +180,10 @@ public class Graph {
                                                                                        // 생성한다.
                   changeExistArray(nearNode[i].charAt(0), Integer.parseInt(nearNode[i].substring(1)));
                   // this -> 인접 node로 연결
-                  thisNode.distanceNode.add((float) i); // thisNode에 temp에 대한 거리정보를 넣어준다.
+                  thisNode.distanceNode.add((float) 0); // thisNode에 temp에 대한 거리정보를 넣어준다.
                   thisNode.nearNode.add(temp);// 인접 node들을 arraylist에 추가한다.
                   // 인접 node에서 this로 연결
-                  temp.distanceNode.add((float) i);
+                  temp.distanceNode.add((float) 0);
                   temp.nearNode.add(thisNode);
                   // node가 하나 추가됬으므로 nodeSize를 1증가시킨다.
                   nodeSize++;
@@ -205,10 +209,10 @@ public class Graph {
                   {
                      // this -> 인접 node로 연결
                      Node temp = getNode(nearNode[i].charAt(0),Integer.parseInt(nearNode[i].substring(1))); // 인접 node를 temp라 지정
-                     thisNode.distanceNode.add((float) i); // thisNode에 temp에 대한 거리정보를 넣어준다.
+                     thisNode.distanceNode.add((float) 0); // thisNode에 temp에 대한 거리정보를 넣어준다.
                      thisNode.nearNode.add(temp);// 인접 node들을 arraylist에 추가한다.
                      // 인접 node에서 this로 연결
-                     temp.distanceNode.add((float) i);
+                     temp.distanceNode.add((float) 0);
                      temp.nearNode.add(thisNode);
                   }
                } else // graph에 인접행렬이 없다면 node를 생성하고, 연결한다.
@@ -219,10 +223,10 @@ public class Graph {
                                                                                        // 생성한다.
                   changeExistArray(nearNode[i].charAt(0), Integer.parseInt(nearNode[i].substring(1)));
                   // this -> 인접 node로 연결
-                  thisNode.distanceNode.add((float) i); // thisNode에 temp에 대한 거리정보를 넣어준다.
+                  thisNode.distanceNode.add((float) 0); // thisNode에 temp에 대한 거리정보를 넣어준다.
                   thisNode.nearNode.add(temp);// 인접 node들을 arraylist에 추가한다.
                   // 인접 node에서 this로 연결
-                  temp.distanceNode.add((float) i);
+                  temp.distanceNode.add((float) 0);
                   temp.nearNode.add(thisNode);
                   // node가 하나 추가됬으므로 nodeSize를 1증가시킨다.
                   nodeSize++;
@@ -237,6 +241,7 @@ public class Graph {
          boolean[] N_DFS = new boolean[MAX_N]; // 각 원소가 true라면 이미 지나온 것이고, false은 아직 탐색하지 않은것
          boolean[] S_DFS = new boolean[MAX_S]; // 각 원소가 true라면 이미 지나온 것이고, false은 아직 탐색하지 않은것
          boolean[] E_DFS = new boolean[MAX_E]; // 각 원소가 true라면 이미 지나온 것이고, false은 아직 탐색하지 않은것
+         boolean[] C_DFS = new boolean[MAX_C]; // 각 원소가 true라면 이미 지나온 것이고, false은 아직 탐색하지 않은것
          Node root = nodeHead;
          Stack<Node> stack = new Stack<Node>();
          N_DFS[root.number] = true;
@@ -263,9 +268,13 @@ public class Graph {
                      E_DFS[n.number] = true;
                      stack.push(n);
                   }
-               }
+               } else if (n.distinction == 'C') {
+                   if (C_DFS[n.number] == false) {
+                       C_DFS[n.number] = true;
+                       stack.push(n);
+                    }
+                 }
             }
-
          }
          System.out.println("오류 :해당 graph에서 node를 찾을 수 없습니다.");
          return null;
@@ -287,7 +296,6 @@ public class Graph {
                return true;
             }
             return false;
-
          } else if (dis == 'S') { // 계단인지 비교
             if (S[num] == true) { // 이미 node가 있는 경우
                return true;
@@ -298,8 +306,13 @@ public class Graph {
                return true;
             }
             return false;
-         }
-         System.out.println( dis +  num + "가 올바른 node 정보인지 확인해주세요");
+         }else if (dis == 'C') { // 엘레베이터인지 비교
+             if (C[num] == true) { // 이미 node가 있는 경우
+                 return true;
+              }
+              return false;
+           }
+         System.out.println( dis +""+  num + "가 올바른 node 정보인지 확인해주세요");
          return false; // 오류
 
       }
@@ -320,7 +333,12 @@ public class Graph {
                E[num] = true;
                return;
             }
-         }
+         } else if (dis == 'C') { // 엘레베이터인지 비교
+             if (C[num] == false) { // 없다면 있는걸로 바꿔준다.
+                 C[num] = true;
+                 return;
+              }
+           }
          System.out.println(dis + num + "가 올바른 node 정보인지 확인해주세요");
          return; // 오류
 
@@ -488,13 +506,130 @@ public class Graph {
             return addLastFloor(floor); // 위에 while문을 빠져나와서 일로 왔다라는 것은 마지막까지 같은것이 없고 마지막보다 큰 층이라는 이야기므로 마지막에 추가해준다.
          }
       }
-
    }
-//   Floor floor(int floor)
-//   {
-//      Floor x = head;
-//      if(Floor Head)
-//      return 
-//   }
+   public Floor findFloor(int floor) {
+	   Floor temp = floorHead;
+	   while(temp != null) {
+		   if(temp.floor == floor)
+		   {
+			   return temp;
+		   }
+		   temp = temp.Next;
+	   }
+	   return null;
+	}
+   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   //
+   //
+   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   //노드와 강의실의 거리를 저장하기 위해 파일을 열고, line을 읽는다.
+   public void readRoomDistanceFile(String roomDistanceFilename)
+   {
+	   try {
+	         File file = new File(roomDistanceFilename); // graph를 그리기 위해 정리한 txt파일을 연다.
+	         FileReader fileReader = new FileReader(file);// 파일을 읽기위해서 filereader를 선언한다.
+	         BufferedReader bufReader = new BufferedReader(fileReader); // 한줄씩 읽어오기 위해서 버퍼를 생성한다.
+	         String line=""; // 한줄씩 읽어온 것을 저장하기 위한 변수
+	         while ((line = bufReader.readLine()) != null) { // 한줄씩 읽어오면서 line에 저장하고, line을 통해 graph를 생성한다.
+	            System.out.println(line);
+	        	addRoomDistance(line);
+	         }
+	         bufReader.close(); // 버퍼를 없앤다.
+	         fileReader.close(); // 리더를 없앤다
+	      } catch (FileNotFoundException e) {
+	         // TODO Auto-generated catch block
+	         e.printStackTrace();
+	      } catch (IOException e) {
+	         // TODO Auto-generated catch block
+	         e.printStackTrace();
+	      }
+   }
+   //읽은 line을 가지고 거리를 더해준다.
+   public void addRoomDistance(String line)
+   {
+	   String[] temp = line.split("/"); // ex) 4N1/410/2.4 이런 것을 /로 나눈다.
+	   String[] floorAndNumber = temp[0].split("N"); //맨앞  4N1 저장된 것을 N을 기준으로 나눈다.
+	   int floor = transformfloorType(floorAndNumber[0]); //String 인 B6~9층을 Integer형태의 숫자로 변환
+	   int num = Integer.parseInt(floorAndNumber[1]);
+	   // 읽어온 line이 어느층의노드인지 찾는다.
+	   Floor tempfloor = findFloor(floor); //floor를 찾고 tempfloor에 저장시킨다.
+	   // line에서 읽어온 노드를 찾는다.
+	   Graph.Floor.Node tempNode = tempfloor.getNode('N', num);
+	   //node에 해당 강의실의정보가  몇번쨰 인덱스 있는지 확인한다.
+	   for(int i =0;tempNode.room[i]!=null;i++){
+		   if(tempNode.room[i].equals(temp[1])) {
+			   tempNode.distance[i] = Float.parseFloat(temp[2]);
+			   break;
+		   }
+	   } 
+   }
+   public void readNodeDistanceFile(String nodeDistanceFilename){
+	   try {
+	         File file = new File(nodeDistanceFilename); // node들간의 거리를 정리한 txt파일을 연다.
+	         FileReader fileReader = new FileReader(file);// 파일을 읽기위해서 filereader를 선언한다.
+	         BufferedReader bufReader = new BufferedReader(fileReader); // 한줄씩 읽어오기 위해서 버퍼를 생성한다.
+	         String line=""; // 한줄씩 읽어온 것을 저장하기 위한 변수
+	         while ((line = bufReader.readLine()) != null) { // 한줄씩 읽어오면서 line에 저장하고, line을 통해 graph를 생성한다.
+	            System.out.println(line);
+	        	addNodeDistance(line);
+	         }
+	         bufReader.close(); // 버퍼를 없앤다.
+	         fileReader.close(); // 리더를 없앤다
+	      } catch (FileNotFoundException e) {
+	         // TODO Auto-generated catch block
+	         e.printStackTrace();
+	      } catch (IOException e) {
+	         // TODO Auto-generated catch block
+	         e.printStackTrace();
+	      }
+   }
+   public void addNodeDistance(String line) {
+	// TODO Auto-generated method stub
+	   String[] temp = line.split("/"); // ex) 4N1/4N2/2.4F 이런 것을 /로 나눈다.
+	   String[] floorAndNumber = temp[0].split("N"); //맨앞  4N1 저장된 것을 N을 기준으로 나눈다.
+	   int floor1 = transformfloorType(floorAndNumber[0]); //String 인 B6~9층을 Integer형태의 숫자로 변환
+	   int num1 = Integer.parseInt(floorAndNumber[1]);
+	  
+	   char disc = ' ';
+	   int num2 = 0;
+	   
+	   float distance = Float.parseFloat(temp[2]);
+	   
+	   // 읽어온 line이 어느층의노드인지 찾는다.
+	   Floor tempfloor = findFloor(floor1); //floor를 찾고 tempfloor에 저장시킨다.
+	   // line에서 읽어온 노드를 찾는다.
+	   Graph.Floor.Node tempNode = tempfloor.getNode('N', num1);
+	   //해당 노드 node에 어떤 노드하고 이어져 있는지 확인하고 정보를 num2와 disc에 저장해놓는다.
+	   if(temp[1].contains("N")) {
+		   String[] floorAndNumber2  = temp[1].split("N");
+		   num2 = Integer.parseInt(floorAndNumber2[1]);
+		   disc = 'N';
+	   }else if(temp[1].contains("E")) {
+		   String[] floorAndNumber2  = temp[1].split("E");
+		   num2 = Integer.parseInt(floorAndNumber2[1]);
+		   disc = 'E';
+	   }else if(temp[1].contains("S")) {
+		   String[] floorAndNumber2  = temp[1].split("S");
+		   num2 = Integer.parseInt(floorAndNumber2[1]);
+		   disc = 'S';
+	   }else if(temp[1].contains("C")) {
+		   String[] floorAndNumber2  = temp[1].split("C");
+		   num2 = Integer.parseInt(floorAndNumber2[1]);
+		   disc = 'C';
+	   }
+	   // tempNode 와 인접 해있는 노드들을 확인하면서 num2와 disc와 같은 노드를 발견하면, 거리를 저장시킨다.
+	   for(int i = 0; i<tempNode.nearNode.size();i++) {
+		   if(tempNode.nearNode.get(i).distinction == disc && tempNode.nearNode.get(i).number == num2) {
+			   tempNode.distanceNode.set(i,distance);
+			   for(int j=0;j< tempNode.nearNode.get(i).nearNode.size();j++) {
+					   if(tempNode.nearNode.get(i).nearNode.get(j).distinction == tempNode.distinction && tempNode.nearNode.get(i).nearNode.get(j).number == tempNode.number) {
+						   tempNode.nearNode.get(i).distanceNode.set(j,distance);
+						   return;
+					   }
+			   }
+		   }
+	   }
+	   
+	}
 
 }
