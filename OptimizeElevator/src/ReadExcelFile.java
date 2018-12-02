@@ -9,13 +9,13 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 public class ReadExcelFile {
 	private CourseInfo courseinfo;
 	private String path;
-	
+
 	// Constructor
 	ReadExcelFile(){
 		this.courseinfo = new CourseInfo();
 		this.path = "C:\\Users\\Guest1\\eclipse-workspace\\OptimizeElevator\\Coursenum.xls";
 	}
-	
+
 	public void readExcel() throws IOException{
 		FileInputStream fis=new FileInputStream(path);
 		HSSFWorkbook workbook=new HSSFWorkbook(fis);
@@ -23,10 +23,10 @@ public class ReadExcelFile {
 		int rowindex=0;
 		int columnindex=0;
 		int num =0;
-		
+
 		for(int i=0; i<workbook.getNumberOfSheets(); i++) {
 			HSSFSheet sheet = workbook.getSheetAt(i);	//sheet 생성
-			
+
 			//행의 수
 			int rows=sheet.getPhysicalNumberOfRows();
 			for(rowindex=1; rowindex<rows; rowindex++){
@@ -62,7 +62,7 @@ public class ReadExcelFile {
 			                    break;
 			                }
 			            }	//end of else
-			            if(columnindex == 20)
+			            if(columnindex == 8)
 			            	courseinfo.setFloating_population(i, rowindex-1, Float.parseFloat(value));
 			            else {
 			            	if(value.equals("false"))
@@ -70,7 +70,7 @@ public class ReadExcelFile {
 			            	else
 			            		courseinfo.setPeopleNum(i, rowindex-1, columnindex-1, Float.parseFloat(value));
 			            }
-			            	
+
 			        }	//end of for loop(column)
 			    }	//end of if
 			}	//end of for loop(row)
@@ -80,5 +80,5 @@ public class ReadExcelFile {
 	public CourseInfo getCourseInfo() {
 		return this.courseinfo;
 	}
-	
+
 }

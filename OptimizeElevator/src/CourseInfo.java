@@ -1,42 +1,42 @@
 
 public class CourseInfo {
-	final int ROW_NUM = 21;	// row: 0±³½Ã ~11±³½Ã
-	final int COLUMN_NUM = 19;	//column: B6 ~ 9Ãþ
+	final int ROW_NUM = 21;	// row: 0ï¿½ï¿½ï¿½ï¿½ ~11ï¿½ï¿½ï¿½ï¿½
+	final int COLUMN_NUM = 9;	//column: 3~ 9ï¿½ï¿½
 	final int DAY_NUM = 5;
-	
+
 	/*
 	 * people_num
-	 * °¢ Ãþº° ½Ã°£´ëº° À¯µ¿ÀÎ¿ø Á¤º¸
-	 * row: 0±³½Ã~11±³½Ã
-	 * column: B6 ~ 9Ãþ
+	 * ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ëº° ï¿½ï¿½ï¿½ï¿½ï¿½Î¿ï¿½ ï¿½ï¿½ï¿½ï¿½
+	 * row: 0ï¿½ï¿½ï¿½ï¿½~11ï¿½ï¿½ï¿½ï¿½
+	 * column: B6 ~ 9ï¿½ï¿½
 	 */
-	
+
 	/*
-	 * floating_population: °¢ Ãþº° À¯µ¿ÀÎ¿øÀÇ ÇÕ
+	 * floating_population: ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Î¿ï¿½ï¿½ï¿½ ï¿½ï¿½
 	 */
-	
+
 	private float[][][] people_num;
 	private float[][] floating_population;
-	
+
 	CourseInfo(){
 		this.people_num = new float[DAY_NUM][ROW_NUM][COLUMN_NUM];
 		this.floating_population = new float[DAY_NUM][ROW_NUM];
 	}
-	
+
 	/* set method */
 	public void setPeopleNum(int day, int row, int column, float num) {
 		people_num[day][row][column] = num;
 	}
-	
+
 	public void setFloating_population(int day, int time, float value) {
-		floating_population[day][time] = value; 
+		floating_population[day][time] = value;
 	}
-	
+
 	/* get method */
 	public float getPeopleNum(int day, int row, int column){
 		return this.people_num[day][row][column];
 	}
-	
+
 	public float getFloatingPopulation(int day, int time) {
 		return this.floating_population[day][time];
 	}
