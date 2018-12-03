@@ -14,12 +14,18 @@ public class Optimize {
 	final float B_AREA_ELEVATOR_1_NORMAL_TIME = 160.0f;
 	final float B_AREA_ELEVATOR_2_NORMAL_TIME = 165.0f;
 	final float C_AREA_ELEVATOR_NORMAL_TIME = 290.0f;
+	final float MAGIC_TIME_SECONDS = 1200.0f;
+
+	final int A_AREA_ELEVATOR_PEOPLE_NUM = 15;
+	final int B_AREA_ELEVATOR_PEOPLE_NUM = 20;
+	final int C_AREA_ELEVATOR_PEOPLE_NUM = 20;
 
 	private CourseInfo courseinfo;
-	private float x = 700.0f;
-	private float y = 0.2f;
-	private float z = 300.0f;
+	private float x;
+	private float y;
+	private float z;
 	private ArrayList<Integer>[][] magicfloor;	//x,y 값에 따라 결정된 magic floor(요알별, 시간대별)
+	private int avgPeoplenum;	//모든 인원수의 평균
 
 	/*
 	* each running time calculate
@@ -30,19 +36,47 @@ public class Optimize {
 	* 5,6: odd floor
 	* 7,8 even floor
 	*/
-	private float[][][] Elevator;
+	private float[][][] Elevator;	//요일별, 시간별 각 엘리베이터별 운행시간
 
+	private float[][] totalPeopleNum;	//요일별, 시간별 1-10회기 운행시간의 총합 * 운행정원
 
 	Optimize(CourseInfo courseinfo){
 		this.courseinfo = courseinfo;
 		this.Elevator = new float[courseinfo.DAY_NUM][courseinfo.ROW_NUM][this.ELEVATOR_NUM];
+		this.totalPeopleNum = new float[courseinfo.DAY_NUM][courseinfo.ROW_NUM];
 
 		// initialize Elevator
 		this.magicfloor = new ArrayList[courseinfo.DAY_NUM][courseinfo.ROW_NUM];
 		for(int i=0; i<courseinfo.DAY_NUM; i++) {
-			for(int j=0; j<courseinfo.ROW_NUM; j++)
+			for(int j=0; j<courseinfo.ROW_NUM; j++){
 				this.magicfloor[i][j] = new ArrayList<Integer>();
+				this.totalPeopleNum[i][j] = 0;
+			}
+
 		}
+	}
+
+
+	public void setXYZ(float x, float y, float z){
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+
+	public float[] getXYZ(){
+		float[] xyz = new float[3];
+		xyz[0] = x;
+		xyz[1] = y;
+		xyz[2] = z;
+
+		return xyz;
+	}
+
+	public int OptimizeElevator(){
+			CalMagicFloor();
+			Elevator_RunningTime();
+			roundRunningNum();
+			return this.avgPeoplenum;
 	}
 
 	//magic floor calculate
@@ -53,7 +87,7 @@ public class Optimize {
 				float floating_population = courseinfo.getFloatingPopulation(day, row);
 				//  total floating populaton is bigger than x
 				if(floating_population >= x) {
-					for(int column=0; column < courseinfo.COLUMN_NUM; column++) {
+					for(int column=0; column < 7; column++) {
 						// peoplenum is bigger than y%
 						if(floating_population * y <= courseinfo.getPeopleNum(day, row, column)) {
 							magicfloor[day][row].add(floor[column]);
@@ -63,7 +97,7 @@ public class Optimize {
 				// total floating populaton is bigger than x
 				// but floating polulation is bigger than y
 				else{
-					for(int column=0; column < courseinfo.COLUMN_NUM; column++){
+					for(int column=0; column < 7; column++){
 						if(courseinfo.getPeopleNum(day, row, column) >= z )
 							magicfloor[day][row].add(floor[column]);
 					}
@@ -143,6 +177,7 @@ public class Optimize {
 					this.Elevator[day][row][number] += this.OPEN_CLOSE_DOOR_TIME + this.BETWEEN_FLOOR_TIME[this.magicfloor[day][row].get(size-1) - 1];	//downside
 				else
 					this.Elevator[day][row][number] = UPSIDE_ELEVATOR_NORMAL_TIME;
+				pre_floor = 1;
 			}
 		}
 	}
@@ -304,4 +339,46 @@ public class Optimize {
 			System.out.print("\n\n");
 		}
 	}
+
+	public void roundRunningNum(){
+
+		for(int day=0; day< courseinfo.DAY_NUM; day++)
+			for(int row=0; row < courseinfo.ROW_NUM; row++){
+				for(int index =0; index < 4; index++)
+					this.Elevator[day][row][index] = (int) (Math.ceil(MAGIC_TIME_SECONDS / this.Elevator[day][row][index]) ) * A_AREA_ELEVATOR_PEOPLE_NUM;
+				for(int index=4; index < 8; index++)
+					this.Elevator[day][row][index] = (int) (Math.ceil(MAGIC_TIME_SECONDS / this.Elevator[day][row][index]) ) * B_AREA_ELEVATOR_PEOPLE_NUM;
+				for(int index=8; index <ELEVATOR_NUM; index++)
+					this.Elevator[day][row][index] = (int) (Math.ceil(MAGIC_TIME_SECONDS / this.Elevator[day][row][index]) ) * C_AREA_ELEVATOR_PEOPLE_NUM;
+
+			}
+		for(int day=0; day < courseinfo.DAY_NUM; day++)
+			for(int row =0; row < courseinfo.ROW_NUM; row++)
+				for(int index = 0; index < ELEVATOR_NUM; index++)
+					this.totalPeopleNum[day][row] += this.Elevator[day][row][index];
+
+		//printTotalPeopleNum();
+		avgPeoplenum();
+	}
+
+	public void printTotalPeopleNum(){
+		for(int day=0; day <courseinfo.DAY_NUM; day++){
+			System.out.println(day);
+			for(int row =0; row < courseinfo.ROW_NUM; row++)
+				System.out.println("row : " + row + " " + this.totalPeopleNum[day][row]);
+			System.out.println();
+		}
+	}
+
+	public void avgPeoplenum(){
+		float temp=0;
+
+		for(int day=0; day< courseinfo.DAY_NUM; day++)
+			for(int row=0; row < courseinfo.ROW_NUM; row++)
+					temp += this.totalPeopleNum[day][row];
+
+		this.avgPeoplenum = (int)Math.ceil( temp / (courseinfo.DAY_NUM * courseinfo.ROW_NUM) );
+		//System.out.println(this.avgPeoplenum + "명");
+	}
+
 }
