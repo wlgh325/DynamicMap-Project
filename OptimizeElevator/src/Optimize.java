@@ -1,6 +1,10 @@
 import java.util.ArrayList;
 
 public class Optimize {
+
+	/*
+	* elevator running time info constant
+	*/
 	final int OPEN_CLOSE_DOOR_TIME = 17;	//단위: 초(s)
 	final float[] BETWEEN_FLOOR_TIME = {0, 6, 8, 8.75f, 9.5f, 10.25f, 11.0f, 11.75f, 12.5f, 13.25f, 14.0f, 14.75f, 15.5f, 16.25f, 17.0f, 17.75f};
 	final int WORST_CASE_TOTAL_PEOPLE_NUM = 940;
@@ -16,6 +20,32 @@ public class Optimize {
 	final float C_AREA_ELEVATOR_NORMAL_TIME = 290.0f;
 	final float MAGIC_TIME_SECONDS = 1200.0f;
 
+
+	/*
+	* normal elevator running info constant
+	* not magic time running info
+	*/
+
+	// A area elevator running info constant
+	final int[] DOWNSIDE_ELEVATOR_A1_RUNNING_INFO = {-6,-5,-4,-3,1,4,6,8};
+	final int[] DOWNSIDE_ELEVATOR_A2_RUNNING_INFO = {-6,-5,-4,-3,1,3,5,7,9};
+	final int[] UPSIDE_ELEVATOR_A3_RUNNING_INFO = {1,2,4,6,8};
+	final int[] UPSIDE_ELEVATOR_A4_RUNNING_INFO = {1,3,5,7,9};
+
+	// B area elevator running info constant
+	final int[] UPSIDE_ELEVATOR_B1_RUNNING_INFO = {1,5,8,11};
+	final int[] ALL_STOP_ELEVATOR_B2_RUNNING_INFO = {-3,-2,-1,1,2,3,4,5,6,7,8,9,10,11,12};
+	final int[] UPSIDE_ELEVATOR_B3_RUNNING_INFO = {1,4,7,10};
+	final int[] MULTIPLES_OF_3_ELEVATOR_B4_RUNNING_INFO = {-3,-2,-1,1,3,6,9,12};
+
+
+
+	// C area elevator running info constant
+	final int[] ODD_ELEVATOR_C1_RUNNING_INFO = {-3,-2,-1,1,3,5,7,9};
+	final int[] EVEN_ELEVATOR_C2_RUNNING_INFO = {-3,-2,-1,1,4,6,8};
+
+
+	// elevator each max boarding num
 	final int A_AREA_ELEVATOR_PEOPLE_NUM = 15;
 	final int B_AREA_ELEVATOR_PEOPLE_NUM = 20;
 	final int C_AREA_ELEVATOR_PEOPLE_NUM = 20;
@@ -26,6 +56,7 @@ public class Optimize {
 	private float z;
 	private ArrayList<Integer>[][] magicfloor;	//x,y 값에 따라 결정된 magic floor(요알별, 시간대별)
 	private int avgPeoplenum;	//모든 인원수의 평균
+	private ArrayList<Integer>[][][] runningElevator;
 
 	/*
 	* each running time calculate
@@ -45,6 +76,12 @@ public class Optimize {
 		this.Elevator = new float[courseinfo.DAY_NUM][courseinfo.ROW_NUM][this.ELEVATOR_NUM];
 		this.totalPeopleNum = new float[courseinfo.DAY_NUM][courseinfo.ROW_NUM];
 
+		this.runningElevator = new ArrayList[courseinfo.DAY_NUM][courseinfo.ROW_NUM][this.ELEVATOR_NUM];
+		for(int i=0; i<courseinfo.DAY_NUM; i++)
+			for(int j=0; j<courseinfo.ROW_NUM; j++)
+				for(int k=0; k<ELEVATOR_NUM; k++)
+					this.runningElevator[i][j][k] = new ArrayList<Integer>();
+
 		// initialize Elevator
 		this.magicfloor = new ArrayList[courseinfo.DAY_NUM][courseinfo.ROW_NUM];
 		for(int i=0; i<courseinfo.DAY_NUM; i++) {
@@ -63,20 +100,11 @@ public class Optimize {
 		this.z = z;
 	}
 
-	public float[] getXYZ(){
-		float[] xyz = new float[3];
-		xyz[0] = x;
-		xyz[1] = y;
-		xyz[2] = z;
-
-		return xyz;
-	}
-
-	public int OptimizeElevator(){
+	public void OptimizeElevator(){
 			CalMagicFloor();
 			Elevator_RunningTime();
 			roundRunningNum();
-			return this.avgPeoplenum;
+			Elevator_ruuningInfo();
 	}
 
 	//magic floor calculate
@@ -154,6 +182,24 @@ public class Optimize {
 		//C area Elevator
 		Elevator_Carea(8);
 		Elevator_Carea(9);
+
+	}
+
+	public void Elevator_ruuningInfo(){
+		//running elevator info
+		runningElevator_InfoNormal(0, DOWNSIDE_ELEVATOR_A1_RUNNING_INFO);
+		runningElevator_InfoNormal(1,DOWNSIDE_ELEVATOR_A2_RUNNING_INFO);
+
+		runningElevator_InfoMagicTime(2, UPSIDE_ELEVATOR_A3_RUNNING_INFO);
+		runningElevator_InfoMagicTime(3, UPSIDE_ELEVATOR_A4_RUNNING_INFO);
+
+		runningElevator_InfoNormal(4, UPSIDE_ELEVATOR_B1_RUNNING_INFO);
+		runningElevator_InfoMagicTime(5, ALL_STOP_ELEVATOR_B2_RUNNING_INFO);
+		runningElevator_InfoNormal(6, UPSIDE_ELEVATOR_B3_RUNNING_INFO);
+		runningElevator_InfoMagicTime(7, MULTIPLES_OF_3_ELEVATOR_B4_RUNNING_INFO);
+
+		runningElevator_InfoNormal(8, ODD_ELEVATOR_C1_RUNNING_INFO);
+		runningElevator_InfoNormal(9,EVEN_ELEVATOR_C2_RUNNING_INFO);
 	}
 
 	public void upsideElevator_Aarea(int number){
@@ -379,6 +425,38 @@ public class Optimize {
 
 		this.avgPeoplenum = (int)Math.ceil( temp / (courseinfo.DAY_NUM * courseinfo.ROW_NUM) );
 		//System.out.println(this.avgPeoplenum + "명");
+	}
+
+
+	public void runningElevator_InfoNormal(int elevator_num, int[] elevator_runninginfo){
+
+		for(int day=0; day< courseinfo.DAY_NUM; day++){
+			for(int row=0; row < courseinfo.ROW_NUM; row++){
+				for(int index = 0; index < elevator_runninginfo.length; index++)
+						this.runningElevator[day][row][elevator_num].add(elevator_runninginfo[index]);
+			}
+		}
+	}
+
+
+	public void runningElevator_InfoMagicTime(int elevator_num, int[] elevator_runninginfo){
+		for(int day=0; day< courseinfo.DAY_NUM; day++){
+			for(int row=0; row < courseinfo.ROW_NUM; row++){
+				//magic floor existing
+				if(!magicfloor[day][row].isEmpty()){
+					for(int index = 0; index < magicfloor[day][row].size(); index++)
+						this.runningElevator[day][row][elevator_num].add(magicfloor[day][row].get(index));
+				}
+				else{
+					for(int index =0; index < elevator_runninginfo.length; index++)
+						this.runningElevator[day][row][elevator_num].add(elevator_runninginfo[index]);
+				}
+			}
+		}
+	}
+
+	public ArrayList<Integer>[][][] getRunningElevatorInfo(){
+		return this.runningElevator;
 	}
 
 }
