@@ -5,7 +5,7 @@ public class Main {
 
 	public static void main(String[] args) throws IOException {
 		final int ROW_NUM = 21;
-		final int ELEVATOR_NUM = 9;
+		final int ELEVATOR_NUM = 10;
 		final int DAY_NUM = 5;
 		
 		ReadExcelFile readExcelFile = new ReadExcelFile();
