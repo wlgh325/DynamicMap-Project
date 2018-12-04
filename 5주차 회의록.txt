@@ -15,9 +15,9 @@
 
 * 엘리베이터 효율적 운행 엑셀파일 입출력 활용하여 진행중
 * GUI는 processing으로 진행 텍스트 파일 입출력 활용
-* Graph 최단 경로 -> Dijkstra argorithm
+* Graph 최단 경로 -> Dijkstra algorithm
 
-Dijkstra argorithm을 위해 이동하는데 걸리는 시간 데이터 수집
+Dijkstra algorithm을 위해 이동하는데 걸리는 시간 데이터 수집
 1. 강의실에서 인접노드까지 거리 -> 수집완료
 2. 교차점 노드끼리의 거리 -> 수집 완료
 3. 층간 이동하는데 걸리는 시간 (엘리베이터, 에스컬레이터, 계단)
