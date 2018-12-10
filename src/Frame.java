@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -22,7 +23,9 @@ import javax.swing.table.DefaultTableModel;
 
 
 public class Frame extends JFrame implements MouseListener{
+
 	private CourseInfo courseinfo;
+	
 	private String[] searchName;
 	private String[] searchLocation;
 	private String[] searchTime;
@@ -31,52 +34,43 @@ public class Frame extends JFrame implements MouseListener{
 	private String[] searchContents;
 	private String[] searchTotalTime;
 	
-	/* ¿À¸¥ÂÊ Panel */
+	/* ì˜¤ë¥¸ìª½ Panel */
 	private JPanel p1 = new JPanel();
 	
-	/* ¿Ş ÂÊ Panel */
-	private JPanel p2 = new JPanel(new FlowLayout()); // ¿ŞÂÊ ¸Ç À§ ºÎºĞ
 
-	private JPanel p3 = new JPanel(new FlowLayout(FlowLayout.LEFT, 70,5)); // ¿ŞÂÊ Panel My Courses ºÎºĞ
-	private JPanel p4 = new JPanel(new BorderLayout()); // My Courses¹Ø ºÎºĞ Ä­
+	/* ì™¼ ìª½ Panel */
+	private JPanel p2 = new JPanel(new FlowLayout()); // ì™¼ìª½ ë§¨ ìœ„ ë¶€ë¶„
+	private JPanel p3 = new JPanel(new FlowLayout(FlowLayout.LEFT, 70,5)); // ì™¼ìª½ Panel My Courses ë¶€ë¶„
+	private JPanel p4 = new JPanel(new BorderLayout()); // My Coursesë°‘ ë¶€ë¶„ ì¹¸
+	private JPanel p5 = new JPanel(new BorderLayout()); // p3ì™€ p4ë¥¼ í•©ì¹œì™¼ìª½ ì™¼ ìª½ ë°‘ ë¶€ë¶„
+	private JPanel p6 = new JPanel(new BorderLayout()); // p5ì™€ p2(ì™¼ìª½ ì•„ë˜ì™€ ìœ„)ì„ í•©ì¹œ
 
-	private JPanel p5 = new JPanel(new BorderLayout()); // p3¿Í p4¸¦ ÇÕÄ£¿ŞÂÊ ¿Ş ÂÊ ¹Ø ºÎºĞ
-
-	private JPanel p6 = new JPanel(new BorderLayout()); // p5¿Í p2(¿ŞÂÊ ¾Æ·¡¿Í À§)À» ÇÕÄ£
-														// ¿ŞÂÊ ÃÑ Panel
 	private JPanel p7 = new JPanel(new BorderLayout());
-	
 	private JPanel p8 = new JPanel(new GridLayout(1,5));
-	
 	private JPanel p9 = new JPanel(new GridLayout(1,5));
-	
 	private JTextField searchtext;
 	private JComboBox<String> course_nameBox;
 
-	
 	/* Button */
 	private JButton add_button;
 	private JButton list_button;
 	private JButton load_button;
 	private JButton save_button;
 	private JButton search_button;
-	
-	
+
 	/* Label */
 	private JLabel name_label;
 	private JLabel location_label;
 	private JLabel time_label;
-	
 	private final int COURSE_TIME = 21;
-	
-	
+
 	/* Table */
-	private String[] colname = {"", "Mon", "Tue", "Wed", "Thu", "Fri" }; // table columnÀÇ ÀÌ¸§
-	private DefaultTableModel add_model;	//table¿¡ Ç¥½ÃÇÒ °ª
+	private String[] colname = {"", "Mon", "Tue", "Wed", "Thu", "Fri" }; // table columnì˜ ì´ë¦„
+	private DefaultTableModel add_model;	//tableì— í‘œì‹œí•  ê°’
 	private JScrollPane scroll;
 	private JTable table;
-	
-	/* column Á¤º¸¸¦ ´ã´Â object */
+
+	/* column ì •ë³´ë¥¼ ë‹´ëŠ” object */
 	private Object[] time = {"0","1A", "1B","2A","2B", "3A", "3B", "4A", "4B", "5A", "5B", "6A","6B","7A","7B","8A","8B","9A", "9B", "10", "11" };
 	private Object[] mon_column;
 	private Object[] tue_column;
@@ -84,152 +78,166 @@ public class Frame extends JFrame implements MouseListener{
 	private Object[] thr_column;
 	private Object[] fri_column;
 	
+
+	private ArrayList<Integer>[][][] runningElevatorInfo;
+	private float x = 930.0f;
+	private float y = 0.209f;
+	private float z = 113.0f;
+	private ReadCoursenum readCoursenum;
+	private Optimize optimizer;
+	
 	
 	/* constructor */
-	public Frame(){
-    	
+	public Frame() throws IOException{
 		/* 
+
 		 * initialize 
+
 		 * */
+
+		readCoursenum = new ReadCoursenum();
+		readCoursenum.readExcel();
+		optimizer = new Optimize(readCoursenum.getCoursenum());
+		optimizer.setXYZ(x,y,z);
+		optimizer.OptimizeElevator();
+		this.runningElevatorInfo = optimizer.getRunningElevatorInfo();
+		
 		
 		add_button = new JButton("Add");
 		list_button = new JButton("List");
 		load_button = new JButton("Load");
 		save_button = new JButton("save");
 		search_button = new JButton("Search");
-		
 		searchtext = new JTextField(15);
 		course_nameBox= new JComboBox<String>();
-		name_label = new JLabel("°ú¸ñ¸í");
-		location_label = new JLabel("°­ÀÇ½Ç");
-		time_label = new JLabel("°­ÀÇ½Ã°£");
+		name_label = new JLabel("ê³¼ëª©ëª…");
+		location_label = new JLabel("ê°•ì˜ì‹¤");
+		time_label = new JLabel("ê°•ì˜ì‹œê°„");
+
 
 		mon_column = new Object[COURSE_TIME];
 		tue_column = new Object[COURSE_TIME];
 		wed_column = new Object[COURSE_TIME];
 		thr_column = new Object[COURSE_TIME];
 		fri_column = new Object[COURSE_TIME];
-		add_model = new DefaultTableModel();	//table¿¡ Ç¥½ÃÇÒ °ª
-		
+		add_model = new DefaultTableModel();	//tableì— í‘œì‹œí•  ê°’
+
 		setModel();
 		table = new JTable(add_model);
-		
 		DefaultTableCellRenderer celAlignCenter = new DefaultTableCellRenderer();
 		celAlignCenter.setHorizontalAlignment(JLabel.CENTER);
-		
-		
+
+
 		/* right button panel */
 		p1.setLayout(new GridLayout(4, 1));
 		p1.add(add_button);
 		p1.add(list_button);
 		p1.add(load_button);
 		p1.add(save_button);
-		
-		
-		/* ¿ŞÂÊ À§ panel */	
+
+
+		/* ì™¼ìª½ ìœ„ panel */	
 		p2.add(searchtext);
 		p2.add(search_button);
-	
-		
-		/* ¿ŞÂÊ ¹Ø Panel */
+
+
+		/* ì™¼ìª½ ë°‘ Panel */
 		p3.add(name_label);
 		p3.add(location_label);
 		p3.add(time_label);
+
 		
-	
-		/* ¿ŞÂÊ À§ ÇÕÄ¡±â */
+		/* ì™¼ìª½ ìœ„ í•©ì¹˜ê¸° */
 		p7.add(p2, BorderLayout.NORTH);
 		p7.add(p3, BorderLayout.CENTER);
 		
-		
-		/* ¾Æ·¡ panel */
+
+		/* ì•„ë˜ panel */
 		p8.add(course_nameBox);
-		table = new JTable(add_model);	//table »ı¼º
-		
+		table = new JTable(add_model);	//table ìƒì„±
+
 		table.setRowHeight(27);
-		scroll = new JScrollPane(table);	//table¿¡ ½ºÅ©·Ñ »ı±â°Ô ÇÏ±â
+		scroll = new JScrollPane(table);	//tableì— ìŠ¤í¬ë¡¤ ìƒê¸°ê²Œ í•˜ê¸°
 		scroll.setSize(576,700);
 		p4.add(scroll);
-		
+
 		p5.add(p8, BorderLayout.NORTH);
 		p5.add(p4, BorderLayout.CENTER);
 
-		
-		/* À§(p7)¿Í ¾Æ·¡(p5)¸¦ ÇÕÄ£ ÃÑ ¿ŞÂÊ Panel */
+
+		/* ìœ„(p7)ì™€ ì•„ë˜(p5)ë¥¼ í•©ì¹œ ì´ ì™¼ìª½ Panel */
 		p6.add(p7, BorderLayout.NORTH);
 		p6.add(p5, BorderLayout.CENTER);
-		
-		
+
+
 		search_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            	String str = searchtext.getText();	//°Ë»ö °­ÀÇ¸í
-				System.out.println("search click");
-				//°Ë»öµÈ °­ÀÇÁ¤º¸ ¿¢¼¿¿¡¼­ ÀĞ¾î¿À±â
+            	String str = searchtext.getText();	//ê²€ìƒ‰ ê°•ì˜ëª…
+            	
+				//ê²€ìƒ‰ëœ ê°•ì˜ì •ë³´ ì—‘ì…€ì—ì„œ ì½ì–´ì˜¤ê¸°
 				ReadExcelfile read_excel = new ReadExcelfile();
 				try {
 					read_excel.readExcel(str);
 					courseinfo = read_excel.getCourseInfo();
 				} catch (IOException ioException) {
-					JOptionPane.showMessageDialog(null, "°­ÀÇ¸¦ ÀÔ·ÂÇØÁÖ¼¼¿ä");
+					JOptionPane.showMessageDialog(null, "ê°•ì˜ë¥¼ ì…ë ¥í•´ì£¼ì„¸ìš”");
 					ioException.printStackTrace();
 				}
-				
-				//°Ë»öµÈ Á¤º¸µé °¡Á®¿À±â
+
+				//ê²€ìƒ‰ëœ ì •ë³´ë“¤ ê°€ì ¸ì˜¤ê¸°
 				setSearchInform();
+
 				        		
-				//°Ë»ö¸ñ·Ï Ãâ·Â
-				
-				//»õ·Î ¸ñ·Ï Ãâ·ÂÇÏ±â
+				//ê²€ìƒ‰ëª©ë¡ ì¶œë ¥
+				//ìƒˆë¡œ ëª©ë¡ ì¶œë ¥í•˜ê¸°
 				course_nameBox.removeAllItems();
-				
-				//comboBox °ª ³Ö±â
+
+				//comboBox ê°’ ë„£ê¸°
 				for(int i=0; i<searchContents.length; i++) {
 					course_nameBox.addItem(searchContents[i]);
 				}
-					
 				searchtext.setText("");
-
             }
         });
+
 
 		add_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-        
             	String selectedItem[];
             	int selectedIndex = 0;
-            	
+
             	try {
-            		selectedIndex = course_nameBox.getSelectedIndex();	//comboboxÀÇ index            		
-            		selectedItem = searchTime[selectedIndex].split("/");	//comboBox¿¡¼­ ¼±ÅÃÇÑ °­ÀÇ ½Ã°£
-            		
-            		
+            		selectedIndex = course_nameBox.getSelectedIndex();	//comboboxì˜ index            		
+            		selectedItem = searchTime[selectedIndex].split("/");	//comboBoxì—ì„œ ì„ íƒí•œ ê°•ì˜ ì‹œê°„
+
+
             		for(int i=0; i<selectedItem.length; i++) {
 	            		switch(selectedItem[i].charAt(0)) {
-	            			case '¿ù':
+	            			case 'ì›”':
 	            				setCourseSchedule(time, selectedItem[i], selectedIndex, 1,i);
 	            				break;
-	            			case 'È­':
+	            			case 'í™”':
 	            				setCourseSchedule(time, selectedItem[i], selectedIndex, 2,i);
 	            				break;
-	                    	case '¼ö':
+	                    	case 'ìˆ˜':
 	                    		setCourseSchedule(time, selectedItem[i], selectedIndex, 3,i);
 	                    		break;
-	            			case '¸ñ':
+	            			case 'ëª©':
 	            				setCourseSchedule(time, selectedItem[i], selectedIndex, 4,i);
 	            				break;
-	            			case '±İ':
+	            			case 'ê¸ˆ':
 	            				setCourseSchedule(time, selectedItem[i], selectedIndex, 5,i);
 	            			}
             		}
             	}catch(Exception ie){
-            		JOptionPane.showMessageDialog(null, "°­ÀÇ¸¦ ¼±ÅÃÇØÁÖ¼¼¿ä");
+            		JOptionPane.showMessageDialog(null, "ê°•ì˜ë¥¼ ì„ íƒí•´ì£¼ì„¸ìš”");
             		ie.printStackTrace();
             	}
-            	
             }
         });
+
 		table.addMouseListener(this);
 		
 		Container contentPane = this.getContentPane();
@@ -240,88 +248,95 @@ public class Frame extends JFrame implements MouseListener{
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setVisible(true);
 	}
-	
+
 	public void setSearchInform() {
 		searchName = courseinfo.getCourse_name();
 		searchLocation = courseinfo.getLocation();
 		searchTime = courseinfo.getCoursetime();
 		searchCode = courseinfo.getClassnum();
-		searchTotalTime = courseinfo.getTotalTime();
-		
+		searchTotalTime = courseinfo.getTotalTime();		
+
 		int length = searchName.length;
 		searchContents = new String[length];
-		
-		
-		//ºñ¾îÀÖ´Â ¹è¿­(null) Àü±îÁö¸¸ °ª ³Ö±â
+
+		//ë¹„ì–´ìˆëŠ” ë°°ì—´(null) ì „ê¹Œì§€ë§Œ ê°’ ë„£ê¸°
 		for(int i=0; !(searchName[i] == null || searchName[i].length() == 0); i++) {
 			searchContents[i] = searchName[i] + "  " + searchLocation[i] + "  " + searchTime[i];
 		}
 	}
+
 	
+
 	public void setCourseSchedule(Object[] time, String selectedItem, int selectedIndex, int columnIndex, int i) {
 		int course_time_index;
-		//¸î½ÃÀÇ °­ÀÇÀÎÁö Ã£±â
+
+		//ëª‡ì‹œì˜ ê°•ì˜ì¸ì§€ ì°¾ê¸°
 		for(course_time_index=0; course_time_index < time.length; course_time_index++) {
 			if(time[course_time_index].equals(selectedItem.substring(1,selectedItem.length())) ) {
 				break;
 			}
 		}
-		
+
 		String[] tempTotalTime = searchTotalTime[selectedIndex].split("/");
+
 		
 		for(int j=course_time_index; j< course_time_index + (Integer.parseInt(tempTotalTime[i]) * 2); j++) {
-			
 			if(add_model.getValueAt(j, columnIndex) == null || add_model.getValueAt(j, columnIndex).toString().length() == 0)
 				add_model.setValueAt(searchName[selectedIndex], j, columnIndex);
 			else { 
-				JOptionPane.showMessageDialog(null, "ÀÌ¹Ì Áßº¹µÇ´Â ½Ã°£¿¡ °­ÀÇ°¡ ÀÖ½À´Ï´Ù");
+				JOptionPane.showMessageDialog(null, "ì´ë¯¸ ì¤‘ë³µë˜ëŠ” ì‹œê°„ì— ê°•ì˜ê°€ ìˆìŠµë‹ˆë‹¤");
 				break;
 			}	
 		}
 	}
-	
+
+
 	public void setModel() {
-		
 		/* table Model */
-    	add_model.addColumn(colname[0], time);			//½Ã°£ column
-    	add_model.addColumn(colname[1], mon_column);	//¿ù
-    	add_model.addColumn(colname[2], tue_column);	//È­
-    	add_model.addColumn(colname[3], wed_column);	//¼ö
-    	add_model.addColumn(colname[4], thr_column);	//¸ñ
-    	add_model.addColumn(colname[5], fri_column);	//±İ
-    	
+    	add_model.addColumn(colname[0], time);			//ì‹œê°„ column
+    	add_model.addColumn(colname[1], mon_column);	//ì›”
+    	add_model.addColumn(colname[2], tue_column);	//í™”
+    	add_model.addColumn(colname[3], wed_column);	//ìˆ˜
+    	add_model.addColumn(colname[4], thr_column);	//ëª© 
+    	add_model.addColumn(colname[5], fri_column);	//ê¸ˆ
+
 	}
+
 	
 	/* Jtable click listener */
 	public void mouseClicked(MouseEvent me) {
 		int row = table.getSelectedRow();
 		int column = table.getSelectedColumn();
-		System.out.println(row + "Çà " + column + "¿­");
-		PrintMap printMap = new PrintMap();
+		
+		System.out.println(row + "í–‰ " + column + "ì—´");
+		
+		for(int i=0; i< optimizer.ELEVATOR_NUM; i++)
+				System.out.print(runningElevatorInfo[column-1][row][i] + " ");
+		
+		
+		System.out.println();
+		
 	}
+
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+
 	}
+
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+	
 	}
 }
-
