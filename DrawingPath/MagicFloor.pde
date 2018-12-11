@@ -9,6 +9,12 @@ public class MagicFloor {
     font=createFont("DS-DIGIT.TTF", 33);
     textFont(font);
 
+    if(floors.matches(" ")) {
+		    	text("B6 B5 B4 B3 B2 B1 1 2 3 4 5 6 7 8 9",25,775); 
+		    }
+		    else {
+		    String[] MagicFloors=floors.split(",");
+		    
     while (arrIdx<MagicFloors.length && floor<=9) {
       if (MagicFloors[arrIdx].matches(Integer.toString(floor))) {
         fill(255, 0, 0); 
