@@ -1,0 +1,14 @@
+6주차 회의록
+
+<<12.10(월) 회의록>>
+
+남은과제 (1)Shortest Path 알고리즘에 엘리베이터 층간이동 추가 .... ~화
+       (2)GUI & ELEVATOR SIMUL. & SHOREST ALG. 결합 .... ~화
+       (3)PROCESSING 시각화 도면 좌표 작업(B6~9층) .......... ~화
+       (4)결합한 파일과 drawingpath.java 결합............... ??
+
+금주 발표 : TEST & EVALUATION 테스트 결과 중점
+	  결합작업 진행 정도.---- (4) 빼고 DONE!
+	  Elevator X/Y/Z 결정. ---- X=930/Y=20.9%/Z=113
+	  
+	
