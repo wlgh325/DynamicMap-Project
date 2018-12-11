@@ -20,19 +20,19 @@ void setup() {
   image(floor, 0, 0, width, height);
 }
 
-	public void mousePressed() {
-		  inIdx=0; //start node on the next floor
-		  if (outIdx==pathDivided.length-1) outIdx=-1; // 처음층 이미지 로드를 위해 -1로 바꿔줌
-		  outIdx++; // 다음층 이미지 로드를 위해 1을 더해줌
-		  if (pathDivided[outIdx].length>1) {// 그 층의 노드가 1개 이상이면 그 층을 이미지로드함
-		    floor=loadImage(loader.LoadImgPath(finder.FindFloor(pathDivided[outIdx][0])));
-		    image(floor, 0, 0, width, height);
-		  } else {// 그 층의 노드가 1개 미만일 경우
-		    while (pathDivided[outIdx].length==1) outIdx++; // 노드 개수가 1개 이상인 층을 찾아 계속 증가시킴
-		    floor=loadImage(loader.LoadImgPath(finder.FindFloor(pathDivided[outIdx][0]))); // 찾으면 이미지 로드
-		    image(floor, 0, 0, width, height);
-		  }
-		}
+public void mousePressed() {
+	inIdx=0; //start node on the next floor
+	if (outIdx==pathDivided.length-1) outIdx=-1; // 처음층 이미지 로드를 위해 -1로 바꿔줌
+	outIdx++; // 다음층 이미지 로드를 위해 1을 더해줌
+	if (pathDivided[outIdx].length>1) {// 그 층의 노드가 1개 이상이면 그 층을 이미지로드함
+	    floor=loadImage(loader.LoadImgPath(finder.FindFloor(pathDivided[outIdx][0])));
+	    image(floor, 0, 0, width, height);
+	  } else {// 그 층의 노드가 1개 미만일 경우
+	    while (pathDivided[outIdx].length==1) outIdx++; // 노드 개수가 1개 이상인 층을 찾아 계속 증가시킴
+	    floor=loadImage(loader.LoadImgPath(finder.FindFloor(pathDivided[outIdx][0]))); // 찾으면 이미지 로드
+	    image(floor, 0, 0, width, height);
+	  }
+}
 
 
 
