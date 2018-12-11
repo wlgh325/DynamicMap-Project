@@ -15,6 +15,7 @@ public class MagicFloor {
 		    else {
 		    String[] MagicFloors=floors.split(",");
 		    
+        }
     while (arrIdx<MagicFloors.length && floor<=9) {
       if (MagicFloors[arrIdx].matches(Integer.toString(floor))) {
         fill(255, 0, 0); 
