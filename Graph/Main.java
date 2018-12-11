@@ -6,6 +6,7 @@ public class Main {
 		String graphPath = "C:\\Users\\YungJae\\git\\DynamicMap-Project\\Graph\\310Graph.txt";
 		String nodeDistancePath = "C:\\Users\\YungJae\\git\\DynamicMap-Project\\Graph\\NodeDistance.txt";
 		String roomDistancePath = "C:\\Users\\YungJae\\git\\DynamicMap-Project\\Graph\\roomDistance.txt";
+<<<<<<< HEAD
 		String floorDistancePath = "C:\\Users\\YungJae\\git\\DynamicMap-Project\\Graph\\FloorDistance2.txt";
 		String startPoint = "B310";
 		String endPoint = "728";
@@ -15,6 +16,11 @@ public class Main {
 		graph.readRoomDistanceFile(roomDistancePath);
 		graph.readFloorDistance(floorDistancePath);
 		graph.sortPath(startPoint, endPoint);
+=======
+		graph.readFile(graphPath);
+		graph.readNodeDistanceFile(nodeDistancePath);
+		graph.readRoomDistanceFile(roomDistancePath);
+>>>>>>> branch 'master' of https://github.com/wlgh325/DynamicMap-Project.git
 	}
 
 }
