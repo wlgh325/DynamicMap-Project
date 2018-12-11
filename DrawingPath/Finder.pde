@@ -11,7 +11,7 @@ public class Finder{
     
     if(!loc.contains("N")&&!loc.contains("C")&&
           !loc.contains("S")&&!loc.contains("E")) { //강의실이나 출입구인 경우
-        if(loc.contains("B")) temp=(char) (loc.charAt(1)+16); //지하층이면 B102 같이  1번째 인덱스에서 그 층을 알 수 있다.          
+        if(loc.contains("-")) temp=(char) (loc.charAt(1)+16); //지하층이면 B102 같이  1번째 인덱스에서 그 층을 알 수 있다.          
         else if(loc.matches("서라벌 4층")) return -5;
         else if(loc.matches("법학관 1층")) return -4;
         else if(loc.matches("제2공학관")) return -3;
@@ -26,7 +26,7 @@ public class Finder{
         }
       }
     else {
-      if(loc.contains("B")) temp=(char) (loc.charAt(1)+16); //지하층이면 B102 같이  1번째 인덱스에서 그 층을 알 수 있다.          
+      if(loc.contains("-")) temp=(char) (loc.charAt(1)+16); //지하층이면 B102 같이  1번째 인덱스에서 그 층을 알 수 있다.          
       else temp=loc.charAt(0); //지상층이면 0번째 인덱스에서 그 층을 알 수 있다.
       switch(temp) {
       case'A':return -1;  case'B':return -2;  case'C':return -3;

@@ -3,7 +3,7 @@ public class ImageLoader{
   private final String imagePath_B6="C:\\Users\\senno\\Desktop\\Study\\Programming\\DataSturctureDesign\\floorImage\\B6thFloor.jpg";
   private final String imagePath_B5="C:\\Users\\senno\\Desktop\\Study\\Programming\\DataSturctureDesign\\floorImage\\B5thFloor.jpg";
   private final String imagePath_B4="C:\\Users\\senno\\Desktop\\Study\\Programming\\DataSturctureDesign\\floorImage\\B4thFloor.jpg";
-  private final String imagePath_B3="C:\\Users\\senno\\Desktop\\Study\\Programming\\DataSturctureDesign\\floorImage\\B3thFloor.jpg";
+  private final String imagePath_B3="C:\\Users\\senno\\Desktop\\Study\\Programming\\DataSturctureDesign\\floorImage\\B3rdFloor.jpg";
   private final String imagePath_B2="C:\\Users\\senno\\Desktop\\Study\\Programming\\DataSturctureDesign\\floorImage\\B2ndFloor.jpg";
   private final String imagePath_B1="C:\\Users\\senno\\Desktop\\Study\\Programming\\DataSturctureDesign\\floorImage\\B1stFloor.jpg";
   private final String imagePath_L1="C:\\Users\\senno\\Desktop\\Study\\Programming\\DataSturctureDesign\\floorImage\\1stFloor.jpg";
