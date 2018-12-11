@@ -41,11 +41,21 @@ public class DrawingPath extends PApplet {
 		image(floor, 0, 0, width, height);
 
 	}
+	
 	public void mousePressed() {
-	  inIdx=0; //start node on the next floor
-	  if (outIdx==pathDivided.length-1) outIdx=-1;		  floor=loadImage(loader.LoadImgPath(finder.FindFloor(pathDivided[++outIdx][0])));
-	  image(floor, 0, 0, width, height);
-	}
+		  inIdx=0; //start node on the next floor
+		  if (outIdx==pathDivided.length-1) outIdx=-1; // ì²˜ìŒì¸µ ì´ë¯¸ì§€ ë¡œë“œë¥¼ ìœ„í•´ -1ë¡œ ë°”ê¿”ì¤Œ
+		  outIdx++; // ë‹¤ìŒì¸µ ì´ë¯¸ì§€ ë¡œë“œë¥¼ ìœ„í•´ 1ì„ ë”í•´ì¤Œ
+		  if (pathDivided[outIdx].length>1) {// ê·¸ ì¸µì˜ ë…¸ë“œê°€ 1ê°œ ì´ìƒì´ë©´ ê·¸ ì¸µì„ ì´ë¯¸ì§€ë¡œë“œí•¨
+		    floor=loadImage(loader.LoadImgPath(finder.FindFloor(pathDivided[outIdx][0])));
+		    image(floor, 0, 0, width, height);
+		  } else {// ê·¸ ì¸µì˜ ë…¸ë“œê°€ 1ê°œ ë¯¸ë§Œì¼ ê²½ìš°
+		    while (pathDivided[outIdx].length==1) outIdx++; // ë…¸ë“œ ê°œìˆ˜ê°€ 1ê°œ ì´ìƒì¸ ì¸µì„ ì°¾ì•„ ê³„ì† ì¦ê°€ì‹œí‚´
+		    floor=loadImage(loader.LoadImgPath(finder.FindFloor(pathDivided[outIdx][0]))); // ì°¾ìœ¼ë©´ ì´ë¯¸ì§€ ë¡œë“œ
+		    image(floor, 0, 0, width, height);
+		  }
+		}
+
 
 	public void draw() {
 		if (inIdx>=(pathDivided[outIdx].length-1)) inIdx=0;
@@ -74,13 +84,13 @@ public class DrawingPath extends PApplet {
 		   Finder finder=new Finder();
 		  
 
-		  public String[][] DividePath(String rsPath) { //°æ·Î¸¦ Ãşº°·Î °¢ ¹è¿­¿¡ ³ª´©´Â ¸Ş¼Òµå
+		  public String[][] DividePath(String rsPath) { //ê²½ë¡œë¥¼ ì¸µë³„ë¡œ ê° ë°°ì—´ì— ë‚˜ëˆ„ëŠ” ë©”ì†Œë“œ
 		    String[][] dstPath=null;
 		    
 		    int prevFloor=0, idx=0;
 		    int[] nodeNum;
-		    int floorNum=0; // °æ·Î ¾ÈÀÇ ÃşÀÇ °³¼ö
-		    String[] temp=rsPath.split(">"); //¿ø·¡ °æ·Î¸¦ ">" ÅäÅ«À¸·Î ³ª´«´Ù
+		    int floorNum=0; // ê²½ë¡œ ì•ˆì˜ ì¸µì˜ ê°œìˆ˜
+		    String[] temp=rsPath.split(">"); //ì›ë˜ ê²½ë¡œë¥¼ ">" í† í°ìœ¼ë¡œ ë‚˜ëˆˆë‹¤
 		    
 		    for(int i=0;i<temp.length;i++) {
 		      if(prevFloor!=finder.FindFloor(temp[i])) {
@@ -119,17 +129,17 @@ public class DrawingPath extends PApplet {
 	class Finder{
 		  
 		  
-		  public int FindFloor(String loc) { //³ëµå¸¦ ¹Ş¾Æ ¸îÃşÀÎÁö Ã£´Â ¸Ş¼Òµå
+		  public int FindFloor(String loc) { //ë…¸ë“œë¥¼ ë°›ì•„ ëª‡ì¸µì¸ì§€ ì°¾ëŠ” ë©”ì†Œë“œ
 		    char temp;
 		    
 		    if(!loc.contains("N")&&!loc.contains("C")&&
-		          !loc.contains("S")&&!loc.contains("E")) { //°­ÀÇ½ÇÀÌ³ª ÃâÀÔ±¸ÀÎ °æ¿ì
-		        if(loc.contains("-")) temp=(char) (loc.charAt(1)+16); //ÁöÇÏÃşÀÌ¸é B102 °°ÀÌ  1¹øÂ° ÀÎµ¦½º¿¡¼­ ±× ÃşÀ» ¾Ë ¼ö ÀÖ´Ù.          
-		        else if(loc.matches("¼­¶ó¹ú 4Ãş")) return -5;
-		        else if(loc.matches("¹ıÇĞ°ü 1Ãş")) return -4;
-		        else if(loc.matches("Á¦2°øÇĞ°ü")) return -3;
-		        else if(loc.matches("ÈÄ¹®")||loc.matches("±â¼÷»ç")) return 1; //ÃâÀÔ±¸ Ã£±â
-		        else temp=loc.charAt(0); //Áö»óÃşÀÌ¸é 0¹øÂ° ÀÎµ¦½º¿¡¼­ ±× ÃşÀ» ¾Ë ¼ö ÀÖ´Ù.
+		          !loc.contains("S")&&!loc.contains("E")) { //ê°•ì˜ì‹¤ì´ë‚˜ ì¶œì…êµ¬ì¸ ê²½ìš°
+		        if(loc.contains("-")) temp=(char) (loc.charAt(1)+16); //ì§€í•˜ì¸µì´ë©´ B102 ê°™ì´  1ë²ˆì§¸ ì¸ë±ìŠ¤ì—ì„œ ê·¸ ì¸µì„ ì•Œ ìˆ˜ ìˆë‹¤.          
+		        else if(loc.matches("ì„œë¼ë²Œ 4ì¸µ")) return -5;
+		        else if(loc.matches("ë²•í•™ê´€ 1ì¸µ")) return -4;
+		        else if(loc.matches("ì œ2ê³µí•™ê´€")) return -3;
+		        else if(loc.matches("í›„ë¬¸")||loc.matches("ê¸°ìˆ™ì‚¬")) return 1; //ì¶œì…êµ¬ ì°¾ê¸°
+		        else temp=loc.charAt(0); //ì§€ìƒì¸µì´ë©´ 0ë²ˆì§¸ ì¸ë±ìŠ¤ì—ì„œ ê·¸ ì¸µì„ ì•Œ ìˆ˜ ìˆë‹¤.
 		        switch(temp) {
 		        case'A':return -1;  case'B':return -2;  case'C':return -3;
 		        case'D':return -4;  case'E':return -5;  case'F':return -6;
@@ -139,8 +149,8 @@ public class DrawingPath extends PApplet {
 		        }
 		      }
 		    else {
-		      if(loc.contains("-")) temp=(char) (loc.charAt(1)+16); //ÁöÇÏÃşÀÌ¸é B102 °°ÀÌ  1¹øÂ° ÀÎµ¦½º¿¡¼­ ±× ÃşÀ» ¾Ë ¼ö ÀÖ´Ù.          
-		      else temp=loc.charAt(0); //Áö»óÃşÀÌ¸é 0¹øÂ° ÀÎµ¦½º¿¡¼­ ±× ÃşÀ» ¾Ë ¼ö ÀÖ´Ù.
+		      if(loc.contains("-")) temp=(char) (loc.charAt(1)+16); //ì§€í•˜ì¸µì´ë©´ B102 ê°™ì´  1ë²ˆì§¸ ì¸ë±ìŠ¤ì—ì„œ ê·¸ ì¸µì„ ì•Œ ìˆ˜ ìˆë‹¤.          
+		      else temp=loc.charAt(0); //ì§€ìƒì¸µì´ë©´ 0ë²ˆì§¸ ì¸ë±ìŠ¤ì—ì„œ ê·¸ ì¸µì„ ì•Œ ìˆ˜ ìˆë‹¤.
 		      switch(temp) {
 		      case'A':return -1;  case'B':return -2;  case'C':return -3;
 		      case'D':return -4;  case'E':return -5;  case'F':return -6;
@@ -149,22 +159,22 @@ public class DrawingPath extends PApplet {
 		      case'7':return 7;  case'8':return 8;  case'9':return 9;
 		      }
 		    }
-		    return 0; //¾î¶² °æ¿ì¿¡µµ ¼ÓÇÏÁö ¾ÊÀ¸¸é 0 ¹İÈ¯ -> ¿¹¿Ü
+		    return 0; //ì–´ë–¤ ê²½ìš°ì—ë„ ì†í•˜ì§€ ì•Šìœ¼ë©´ 0 ë°˜í™˜ -> ì˜ˆì™¸
 		  }
 		    
 		   public int FindLocX(String loc)
 		   {
 		      try {
-		            File file = new File("C:\\Users\\senno\\Desktop\\DrawingPath\\NodeLocation.txt"); // graph¸¦ ±×¸®±â À§ÇØ Á¤¸®ÇÑ txtÆÄÀÏÀ» ¿¬´Ù.
-		            FileReader fileReader = new FileReader(file);// ÆÄÀÏÀ» ÀĞ±âÀ§ÇØ¼­ filereader¸¦ ¼±¾ğÇÑ´Ù.
-		            BufferedReader bufReader = new BufferedReader(fileReader); // ÇÑÁÙ¾¿ ÀĞ¾î¿À±â À§ÇØ¼­ ¹öÆÛ¸¦ »ı¼ºÇÑ´Ù.
-		            String line=""; // ÇÑÁÙ¾¿ ÀĞ¾î¿Â °ÍÀ» ÀúÀåÇÏ±â À§ÇÑ º¯¼ö
-		            while ((line = bufReader.readLine()) != null) { // ÇÑÁÙ¾¿ ÀĞ¾î¿À¸é¼­ line¿¡ ÀúÀåÇÏ°í, lineÀ» ÅëÇØ graph¸¦ »ı¼ºÇÑ´Ù.
+		            File file = new File("C:\\Users\\senno\\Desktop\\DrawingPath\\NodeLocation.txt"); // graphë¥¼ ê·¸ë¦¬ê¸° ìœ„í•´ ì •ë¦¬í•œ txtíŒŒì¼ì„ ì—°ë‹¤.
+		            FileReader fileReader = new FileReader(file);// íŒŒì¼ì„ ì½ê¸°ìœ„í•´ì„œ filereaderë¥¼ ì„ ì–¸í•œë‹¤.
+		            BufferedReader bufReader = new BufferedReader(fileReader); // í•œì¤„ì”© ì½ì–´ì˜¤ê¸° ìœ„í•´ì„œ ë²„í¼ë¥¼ ìƒì„±í•œë‹¤.
+		            String line=""; // í•œì¤„ì”© ì½ì–´ì˜¨ ê²ƒì„ ì €ì¥í•˜ê¸° ìœ„í•œ ë³€ìˆ˜
+		            while ((line = bufReader.readLine()) != null) { // í•œì¤„ì”© ì½ì–´ì˜¤ë©´ì„œ lineì— ì €ì¥í•˜ê³ , lineì„ í†µí•´ graphë¥¼ ìƒì„±í•œë‹¤.
 		               String[] temp=line.split("/");
 		               if(temp[0].matches(loc)) return Integer.parseInt(temp[1]);
 		            }
-		            bufReader.close(); // ¹öÆÛ¸¦ ¾ø¾Ø´Ù.
-		            fileReader.close(); // ¸®´õ¸¦ ¾ø¾Ø´Ù
+		            bufReader.close(); // ë²„í¼ë¥¼ ì—†ì•¤ë‹¤.
+		            fileReader.close(); // ë¦¬ë”ë¥¼ ì—†ì•¤ë‹¤
 		         } catch (FileNotFoundException e) {
 		            // TODO Auto-generated catch block
 		            e.printStackTrace();
@@ -178,16 +188,16 @@ public class DrawingPath extends PApplet {
 		  
 		  public int FindLocY(String loc){
 		    try {
-		            File file = new File("C:\\Users\\senno\\Desktop\\DrawingPath\\NodeLocation.txt"); // graph¸¦ ±×¸®±â À§ÇØ Á¤¸®ÇÑ txtÆÄÀÏÀ» ¿¬´Ù.
-		            FileReader fileReader = new FileReader(file);// ÆÄÀÏÀ» ÀĞ±âÀ§ÇØ¼­ filereader¸¦ ¼±¾ğÇÑ´Ù.
-		            BufferedReader bufReader = new BufferedReader(fileReader); // ÇÑÁÙ¾¿ ÀĞ¾î¿À±â À§ÇØ¼­ ¹öÆÛ¸¦ »ı¼ºÇÑ´Ù.
-		            String line=""; // ÇÑÁÙ¾¿ ÀĞ¾î¿Â °ÍÀ» ÀúÀåÇÏ±â À§ÇÑ º¯¼ö
-		            while ((line = bufReader.readLine()) != null) { // ÇÑÁÙ¾¿ ÀĞ¾î¿À¸é¼­ line¿¡ ÀúÀåÇÏ°í, lineÀ» ÅëÇØ graph¸¦ »ı¼ºÇÑ´Ù.
+		            File file = new File("C:\\Users\\senno\\Desktop\\DrawingPath\\NodeLocation.txt"); // graphë¥¼ ê·¸ë¦¬ê¸° ìœ„í•´ ì •ë¦¬í•œ txtíŒŒì¼ì„ ì—°ë‹¤.
+		            FileReader fileReader = new FileReader(file);// íŒŒì¼ì„ ì½ê¸°ìœ„í•´ì„œ filereaderë¥¼ ì„ ì–¸í•œë‹¤.
+		            BufferedReader bufReader = new BufferedReader(fileReader); // í•œì¤„ì”© ì½ì–´ì˜¤ê¸° ìœ„í•´ì„œ ë²„í¼ë¥¼ ìƒì„±í•œë‹¤.
+		            String line=""; // í•œì¤„ì”© ì½ì–´ì˜¨ ê²ƒì„ ì €ì¥í•˜ê¸° ìœ„í•œ ë³€ìˆ˜
+		            while ((line = bufReader.readLine()) != null) { // í•œì¤„ì”© ì½ì–´ì˜¤ë©´ì„œ lineì— ì €ì¥í•˜ê³ , lineì„ í†µí•´ graphë¥¼ ìƒì„±í•œë‹¤.
 		               String[] temp=line.split("/");
 		               if(temp[0].matches(loc)) return Integer.parseInt(temp[2]);
 		            }
-		            bufReader.close(); // ¹öÆÛ¸¦ ¾ø¾Ø´Ù.
-		            fileReader.close(); // ¸®´õ¸¦ ¾ø¾Ø´Ù
+		            bufReader.close(); // ë²„í¼ë¥¼ ì—†ì•¤ë‹¤.
+		            fileReader.close(); // ë¦¬ë”ë¥¼ ì—†ì•¤ë‹¤
 		         } catch (FileNotFoundException e) {
 		            // TODO Auto-generated catch block
 		            e.printStackTrace();
@@ -219,7 +229,7 @@ public class DrawingPath extends PApplet {
 		  private final String imagePath_L8="C:\\Users\\senno\\Desktop\\Study\\Programming\\DataSturctureDesign\\floorImage\\8thFloor.jpg";
 		  private final String imagePath_L9="C:\\Users\\senno\\Desktop\\Study\\Programming\\DataSturctureDesign\\floorImage\\9thFloor.jpg";
 		  
-		  public String LoadImgPath(int floor) { // ³ëµå¸¦ ¹Ş¾Æ ÀÌ¹ÌÁö·Îµå°¡ ÇÊ¿äÇÑ ÃşÀÇ ÀÌ¹ÌÁö µğ·ºÅä¸® °æ·Î¸¦ ¹İÈ¯ÇÑ´Ù
+		  public String LoadImgPath(int floor) { // ë…¸ë“œë¥¼ ë°›ì•„ ì´ë¯¸ì§€ë¡œë“œê°€ í•„ìš”í•œ ì¸µì˜ ì´ë¯¸ì§€ ë””ë ‰í† ë¦¬ ê²½ë¡œë¥¼ ë°˜í™˜í•œë‹¤
 		    
 		    switch(floor) {
 		    case -1:return imagePath_B1;  case -2:return imagePath_B2;  case -3:return imagePath_B3;
