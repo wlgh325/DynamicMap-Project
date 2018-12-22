@@ -1987,9 +1987,9 @@ public class Graph {
 
 			a = goalDist.pop();
 
-			System.out.println(i + "번 route : " + b);
+			//System.out.println(i + "번 route : " + b);
 
-			System.out.println(i + "번 dist : " + a + "");
+			//System.out.println(i + "번 dist : " + a + "");
 
 			if (min > a) {
 
@@ -2299,7 +2299,7 @@ public class Graph {
 
 				Floor f = findFloor(elevateInfo[i][j]);
 
-				System.out.println(i + ":" + j + "");
+				//System.out.println(i + ":" + j + "");
 
 				if (i >= 0 && i <= 3) { // a구역
 

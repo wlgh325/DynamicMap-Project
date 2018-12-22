@@ -106,6 +106,7 @@ public class Frame extends JFrame implements MouseListener{
 		optimizer.OptimizeElevator();
 		this.runningElevatorInfo = optimizer.getRunningElevatorInfo();
 
+		/*
 		for(int i=0; i<Coursenum.DAY_NUM; i++) {
 			System.out.println("-----------------");
 			System.out.println(i);
@@ -120,7 +121,7 @@ public class Frame extends JFrame implements MouseListener{
 				}
 			}
 		}
-			
+			*/
 				
 					
 		
@@ -243,40 +244,47 @@ public class Frame extends JFrame implements MouseListener{
             		selectedIndex = course_nameBox.getSelectedIndex();	//combobox의 index
             		selectedItem = searchTime[selectedIndex].split("/");	//comboBox에서 선택한 강의 시간
             		place = searchLocation[selectedIndex].split("/");
-
+            		String temp_place = "";
             		// 강의실이 310관에 있을때
             		for(int i=0; i<selectedItem.length; i++, j++) {
-							String temp_place = "";
-							if (place[0].substring(0,3).equals("310")){
-								String[] temp = place[j].split(" ");	//parsing
+            			if(i < place.length){
+            				
+            			String temp_string = place[i].trim();
+						if (temp_string.substring(0,3).equals("310")){
+							if(j < place.length) {
+								String[] temp = temp_string.split(" ");	//parsing
 								temp_place = temp[1];
+							}			
+						}
+						else{
+							
+							switch(temp_string.substring(0,3)){
+								case "102":
+								case "103":
+								case "104":
+								case "105":
+								case "106":
+								case "203":
+									temp_place = "B559호";
+									break;
+								case "207":
+								case "208":
+								case "209":
+									temp_place = "B399호";
+									break;
+								case "301":
+								case "302":
+								case "303":
+								case "304":
+								case "305":
+									temp_place = "199호";
+									break;
+								case "308":
+								case "309":
+									temp_place ="198호";
 							}
-							else{
-								switch(place[0].substring(0,3)){
-									case "102":
-									case "103":
-									case "104":
-									case "105":
-									case "106":
-									case "203":
-										temp_place = "B559";
-										break;
-									case "207":
-									case "208":
-									case "209":
-										temp_place = "B399";
-										break;
-									case "301":
-									case "302":
-										temp_place = "198";
-										break;
-									case "303":
-									case "304":
-									case "305":
-									case "309":
-										temp_place ="199";
-								}
-							}
+						}
+            			}
 	       	        	switch(selectedItem[i].charAt(0)) {
 	       	        		case '월':
 	       	        			setCourseSchedule(time, selectedItem[i], selectedIndex, 1,i, temp_place);
@@ -352,7 +360,7 @@ public class Frame extends JFrame implements MouseListener{
 			if(add_model.getValueAt(j, columnIndex) == null || add_model.getValueAt(j, columnIndex).toString().length() == 0) {
 				add_model.setValueAt(searchName[selectedIndex], j, columnIndex);	//time table에 강의 추가하기
 				this.tableInfo[j][columnIndex-1].setCheck(true);
-				this.tableInfo[j][columnIndex-1].setPlace(place.substring(0, place.length()-1));
+				this.tableInfo[j][columnIndex-1].setPlace(place.substring(0, place.length() -1));
 			}
 			else {
 				JOptionPane.showMessageDialog(null, "이미 중복되는 시간에 강의가 있습니다");
@@ -378,11 +386,26 @@ public class Frame extends JFrame implements MouseListener{
 	public void mouseClicked(MouseEvent me) {
 		int row = table.getSelectedRow();
 		int column = table.getSelectedColumn();
-
-		//System.out.println(row + "행 " + column + "열");
-
-		cal_start_end_place(row, column);
-		makeGraph(row, column);
+		int temp;
+		boolean magicCheck = false;
+		
+		ArrayList<Integer>[][] magicfloor = this.optimizer.getMagicFloorInfo();
+			
+		//System.out.println("row: " + row + "  column: " + column);
+		if(table.getValueAt(row, column) != null) {
+			temp = cal_start_end_place(row, column);
+			
+			//magic time check
+			if( magicfloor[column-1][temp].size() != 0 ) {
+				magicCheck = true;
+			}
+			System.out.println("magic check:: " + magicCheck + " column-1 : " + (column-1) + "  temp: " + temp);
+			makeGraph(temp, column -1);	
+		}
+		else {
+			JOptionPane.showMessageDialog(null, "비어있는 시간표입니다");
+		}
+		
 	}
 
 	@Override
@@ -406,42 +429,54 @@ public class Frame extends JFrame implements MouseListener{
 
 	}
 
-	public void cal_start_end_place(int row, int column) {
-		int check =row;
-		int check2;
-		
+	public int cal_start_end_place(int row, int column) {
+		int check =row;	//after check(누른거)
+		int check2=row;	//before check(전 강의)
+
 		// 이전 강의 위치 계산
-		while( check != -1 && check != 23 && this.tableInfo[check][column-1].getTableCheck() == false ) {
-			check--;
+		int temp = row;
+		for(; check > 0; check --) {
+			if(!this.tableInfo[check][column - 1].getTablePlace().equals( this.tableInfo[check-1][column - 1].getTablePlace() )) {
+				break;
+			}
 		}
-
-		if(check != -1)
-			this.before_coursePlace = this.tableInfo[check][column-1].getTablePlace();
-		else
-			JOptionPane.showMessageDialog(null, "전 시간에 강의가 없습니다");
-
-		//다음 강의 위치 계산
-		check2=row +1;
-		while( check != -1 && check != 23 && !this.tableInfo[check][column - 1].getTablePlace().equals("")) {
-			check ++;
-		}
-		
-		while( check != -1 && check != 23 && this.tableInfo[check][column - 1].getTablePlace().equals("")) {
-			check ++;
-		}
-		
 		
 		if(check != 23)
-			this.after_coursePlace = this.tableInfo[check][column - 1].getTablePlace();
+			this.after_coursePlace = this.tableInfo[check][column-1].getTablePlace();
 		else
-			JOptionPane.showMessageDialog(null, "다음 시간에 강의가 없습니다");
+			JOptionPane.showMessageDialog(null, "전 시간에 강의가 없습니다");
+		
+		
+		if(check != 0) {
+			for(; check2 >0; check2--) {
+				if(!this.tableInfo[check][column - 1].getTablePlace().equals( this.tableInfo[check2-1][column - 1].getTablePlace() ))
+					if(!this.tableInfo[check2-1][column - 1].getTablePlace().equals("")) {
+						check2--;
+						break;
+					}	
+			}
+		}
+		else {
+			this.before_coursePlace = "199";
+			return check;
+		}
+		
+		if(check2 != 0) {
+			this.before_coursePlace = this.tableInfo[check2][column - 1].getTablePlace();
+		}
+		else {
+			this.before_coursePlace = "199";
+		}
+			
 		
 		//공강시간이 2시간 이상일경우
 		if(check2 - check >= this.DEFAULT_TIME)
 			this.before_coursePlace = "B399";
+	
+		return check;
 	}
 
-	public void makeGraph(int day, int time) {
+	public void makeGraph(int time, int day) {
 	      Graph graph = new Graph();
 	      ReadCoursenum readCoursenum = new ReadCoursenum();
 	      int rm =0;
@@ -466,21 +501,22 @@ public class Frame extends JFrame implements MouseListener{
 	      String startPoint = this.before_coursePlace;
 	      String endPoint = this.after_coursePlace;
 	      
+	      
 	      //엘베정보 받아오기
 	      //엘베 다른 시간에 걸 받아올려면  지금 [1][9] 로 되어있는부분의 숫자를 바꿔 주시면됩니다. 요일, 시간 엘레베이터 호 순이라서 지금 1 = 화요일  9 4교시 a일껄요
-	      for(int i= 0; i< this.runningElevatorInfo[1][9].length; i++) {
-	         for(int k =0; k<this.runningElevatorInfo[1][9][i].size();k++ )
+	      for(int i= 0; i< this.runningElevatorInfo[day][time].length; i++) {
+	         for(int k =0; k<this.runningElevatorInfo[day][time][i].size();k++ )
 	         {
-	            if(this.runningElevatorInfo[1][9][i].get(k)>=10) {
+	            if(this.runningElevatorInfo[day][time][i].get(k)>=10) {
 	               rm++;
 	            }
 	         }
-	         elevator_two[i] = new int[this.runningElevatorInfo[1][9][i].size()-rm];
-	         for(int j = 0; j<this.runningElevatorInfo[1][9][i].size();j++)
+	         elevator_two[i] = new int[this.runningElevatorInfo[day][time][i].size()-rm];
+	         for(int j = 0; j<this.runningElevatorInfo[day][time][i].size();j++)
 	         {
-	            if(this.runningElevatorInfo[1][9][i].get(j)<10)
+	            if(this.runningElevatorInfo[day][time][i].get(j)<10)
 	            {
-	               elevator_two[i][j] = this.runningElevatorInfo[1][9][i].get(j);
+	               elevator_two[i][j] = this.runningElevatorInfo[day][time][i].get(j);
 	            }
 	         }
 	         rm =0;
@@ -492,7 +528,8 @@ public class Frame extends JFrame implements MouseListener{
 	      
 	      //엘베 정보 넣기
 	      graph.putElevate(elevator_two);
+	      System.out.println(startPoint+endPoint);
 	      graph.sortPath(startPoint, endPoint);
-	      graph.sortPath(endPoint, startPoint);
+	      //graph.sortPath(endPoint, startPoint);
 	}
 }
