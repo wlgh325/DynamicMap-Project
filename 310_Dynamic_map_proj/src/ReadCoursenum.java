@@ -13,7 +13,7 @@ public class ReadCoursenum {
 	// Constructor
 	ReadCoursenum(){
 		this.coursenum = new Coursenum();
-		this.path = "C:\\Users\\Guest1\\eclipse-workspace\\Course_swing\\data\\Coursenum.xls";
+		this.path = "C:\\Users\\senno\\Desktop\\310_Dynamic_map_proj\\data\\Coursenum.xls";
 	}
 
 	public void readExcel() throws IOException{

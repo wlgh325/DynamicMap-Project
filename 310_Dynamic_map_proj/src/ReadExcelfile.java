@@ -6,6 +6,8 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
+import processing.core.PApplet;
+
 
 public class ReadExcelfile {
 	private CourseInfo courseinfo;
@@ -14,7 +16,7 @@ public class ReadExcelfile {
 	// Constructor
 	ReadExcelfile(){
 		this.courseinfo = new CourseInfo();
-		this.path = "C:\\Users\\Guest1\\eclipse-workspace\\Course_swing\\data\\CourseList.xls";
+		this.path = "C:\\Users\\senno\\Desktop\\310_Dynamic_map_proj\\data\\CourseList.xls";
 	}
 	
 	public void readExcel(String str) throws IOException{

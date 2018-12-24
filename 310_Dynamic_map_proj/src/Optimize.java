@@ -509,5 +509,9 @@ public class Optimize {
 	public ArrayList<Integer>[][][] getRunningElevatorInfo(){
 		return this.runningElevator;
 	}
+	
+	public ArrayList<Integer>[][] getMagicFloorInfo(){
+	      return this.magicfloor;
+	   }
 
 }

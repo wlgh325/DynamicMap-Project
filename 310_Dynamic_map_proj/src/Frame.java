@@ -21,6 +21,8 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
+import processing.core.PApplet;
+
 
 public class Frame extends JFrame implements MouseListener{
 
@@ -91,12 +93,16 @@ public class Frame extends JFrame implements MouseListener{
 
 	private String before_coursePlace;
 	private String after_coursePlace;
+	
+	// referenced by DrawingPath
+	static boolean magicCheck;
+	static String magicFloor;
+	static String path;
+	
 	/* constructor */
 	public Frame() throws IOException{
 		/*
-
 		 * initialize
-
 		 * */
 
 		readCoursenum = new ReadCoursenum();
@@ -265,7 +271,7 @@ public class Frame extends JFrame implements MouseListener{
 								case "105":
 								case "106":
 								case "203":
-									temp_place = "B559호";
+									temp_place = "B599호";
 									break;
 								case "207":
 								case "208":
@@ -387,7 +393,7 @@ public class Frame extends JFrame implements MouseListener{
 		int row = table.getSelectedRow();
 		int column = table.getSelectedColumn();
 		int temp;
-		boolean magicCheck = false;
+		magicCheck = false;
 		
 		ArrayList<Integer>[][] magicfloor = this.optimizer.getMagicFloorInfo();
 			
@@ -401,10 +407,14 @@ public class Frame extends JFrame implements MouseListener{
 			}
 			System.out.println("magic check:: " + magicCheck + " column-1 : " + (column-1) + "  temp: " + temp);
 			makeGraph(temp, column -1);	
+			
+			//call DrawingPath
+			PApplet.main("DrawingPath");
 		}
 		else {
 			JOptionPane.showMessageDialog(null, "비어있는 시간표입니다");
 		}
+		
 		
 	}
 
@@ -490,10 +500,10 @@ public class Frame extends JFrame implements MouseListener{
 	      String[] elevator_one = new String[10]; //10호기까지 있으므로
 	      int[][] elevator_two = new int[10][];
 	      
-	      String graphPath = "C:\\Users\\Guest1\\eclipse-workspace\\Course_swing\\data\\310Graph.txt";
-	      String nodeDistancePath = "C:\\Users\\Guest1\\eclipse-workspace\\Course_swing\\data\\NodeDistance.txt";
-	      String roomDistancePath = "C:\\Users\\Guest1\\eclipse-workspace\\Course_swing\\data\\roomDistance.txt";
-	      String floorDistancePath = "C:\\Users\\Guest1\\eclipse-workspace\\Course_swing\\data\\FloorDistance.txt";
+	      String graphPath = "C:\\Users\\senno\\Desktop\\310_Dynamic_map_proj\\data\\310Graph.txt";
+	      String nodeDistancePath = "C:\\Users\\senno\\Desktop\\310_Dynamic_map_proj\\data\\NodeDistance.txt";
+	      String roomDistancePath = "C:\\Users\\senno\\Desktop\\310_Dynamic_map_proj\\data\\roomDistance.txt";
+	      String floorDistancePath = "C:\\Users\\senno\\Desktop\\310_Dynamic_map_proj\\data\\FloorDistance.txt";
 	      
 	      //시작이나 끝지점 예를 들어서 서라벌에서 -> 316강의실가고싶다하시면 서라벌이라는게 B599라는 겁니다.
 	      // 그런게 몇개있는데
@@ -529,7 +539,9 @@ public class Frame extends JFrame implements MouseListener{
 	      //엘베 정보 넣기
 	      graph.putElevate(elevator_two);
 	      System.out.println(startPoint+endPoint);
-	      graph.sortPath(startPoint, endPoint);
+	      path = graph.sortPath(startPoint, endPoint);
+	      magicFloor=graph.magicFloorInfo(path);
 	      //graph.sortPath(endPoint, startPoint);
 	}
+	
 }
