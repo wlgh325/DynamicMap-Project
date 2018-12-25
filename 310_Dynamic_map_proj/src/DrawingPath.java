@@ -37,12 +37,12 @@ public class DrawingPath extends PApplet {
 	  floor=loadImage(loader.LoadImgPath(finder.FindFloor(pathDivided[outIdx][0]))); 
 	  image(floor, 0, 0, width, height);
 	  													//첫번째층 이미지로드를 첫 실행으로함
-//	  for(int i=0;i<pathDivided.length;i++) { //debugging
-//		  for(int j=0;j<pathDivided[i].length;j++) {
-//			  System.out.print(pathDivided[i][j]+" ");
-//		  }
-//		  System.out.println();
-//	  }
+	  for(int i=0;i<pathDivided.length;i++) { //debugging
+		  for(int j=0;j<pathDivided[i].length;j++) {
+			  System.out.print(pathDivided[i][j]+" ");
+		  }
+		  System.out.println();
+	  }
 	  
 	}
 
@@ -132,11 +132,16 @@ public class DrawingPath extends PApplet {
 		    			numTemp+=nodeNum[j];
 		    		} //path String의 지하층이 나타나는 순서 저장
 		    		
-		    		if(temp[numTemp].contains("-")&&
-		    					(temp[numTemp].contains("C")||temp[numTemp].contains("S")))
-		    		{//층이 지하이고 길이가 3인 배열이 생성되는 것은 전부 길이를 2로 한다.
+		    		if((temp[numTemp].contains("-")&&
+		    					(temp[numTemp].contains("C")||temp[numTemp].contains("S")))||
+		    				(temp[numTemp].matches("5S2")&&temp[numTemp+2].matches("5S3"))||
+		    				(temp[numTemp].matches("5S3")&&temp[numTemp+2].matches("5S2"))||
+		    				(temp[numTemp].matches("7S2")&&temp[numTemp+2].matches("7S3"))||
+		    				(temp[numTemp].matches("7S3")&&temp[numTemp+2].matches("7S2")))
+		    		{//층이 지하이고 길이가 3인 배열이 생성되는 것은 전부 길이를 2로 한다.; 예외> 5층 중앙계단, 7층 중앙계단
 		    				nodeNum[seq]=2; numTemp=0;
 		    		}
+		    		numTemp=0;
 		    	}
 		        prevFloor=finder.FindFloor(temp[i]); //전 노드와 층이 다르면 현재층을 전층으로 갱신한다.
 		        seq++; //전 노드와 층이 다르면 다음층을 위한 인덱스로 넘어간다
@@ -152,9 +157,12 @@ public class DrawingPath extends PApplet {
 		    prevFloor=0; numTemp=0; //개수 세기 위한 임시변수 재사용을 위해 초기화
 		    for(int i=0;i<dstPath.length;i++) {
 		      for(int j=0;j<dstPath[i].length;j++) {
-		    	  if(temp[numTemp].contains("-")&&
-		    			  (temp[numTemp].contains("S")||temp[numTemp].contains("C"))&&
-		    			  		dstPath[i].length==2) { //계단이나 에스컬레이터에서 시작해서 계단이나 에스컬레이터로 들어가는 경우
+		    	  if((temp[numTemp].contains("-")&&
+		    			  (temp[numTemp].contains("S")||temp[numTemp].contains("C"))&&dstPath[i].length==2)
+		    			  ||(temp[numTemp].matches("5S2")&&temp[numTemp+2].matches("5S3"))||
+		    				(temp[numTemp].matches("5S3")&&temp[numTemp+2].matches("5S2"))||
+		    				(temp[numTemp].matches("7S2")&&temp[numTemp+2].matches("7S3"))||
+		    				(temp[numTemp].matches("7S3")&&temp[numTemp+2].matches("7S2"))) { //계단이나 에스컬레이터에서 시작해서 계단이나 에스컬레이터로 들어가는 경우
 		    		  dstPath[i][j]=temp[numTemp];//반환할 이중 배열에 값을 넣고
 		    		  numTemp+=2; //중간 노드를 무시한다.
 		    		  dstPath[i][j+1]=temp[numTemp++];
@@ -367,178 +375,211 @@ public class DrawingPath extends PApplet {
 		}
 	
 	class ExProcessor{
-		  private ArrayList<String> exception=new ArrayList<String>();
-		  
+		  private ArrayList<String> exceptionA=new ArrayList<String>();
+		  private ArrayList<String> exceptionB=new ArrayList<String>();
 		   
 		   public String embodyPath(String path){
-		      addAllException();
+		      addAexception();
+		      addBexception();
 		      String[] divided=path.split("/");
 		      String newPath=divided[0];
 		      
 		      for(int i=0;i<divided.length-1;i++){
-		        for(int j=0;j<exception.size();j++){
-		          String[] temp=exception.get(j).split("/");
+		        for(int j=0;j<exceptionA.size();j++){ //일반 코너점 검사
+		          String[] tempA=exceptionA.get(j).split("/");
 		          
-		          if(divided[i].matches(temp[0]) && divided[i+1].matches(temp[1])){
-
-		        	  if(temp.length==4) {//꺾인 부분이 두군데인 경우
-		        		  newPath+=("/"+temp[2]+"/"+temp[3]); 
-		        	  }
-		        	  else {//꺾인 부분이 한군데인 경우; temp.length==3
-		        		  newPath+=("/"+temp[2]);		              
-		        	  }
+		          for(int k=0;k<exceptionB.size();k++) { //중앙계단 코너점 검사
+			          String[] tempB=exceptionB.get(k).split("/");
+			          
+		        	  	if(divided[i].matches(tempA[0]) && divided[i+1].matches(tempA[1])) {
+		        	  		if(tempA.length==4) {//꺾인 부분이 두군데인 경우
+		        	  			newPath+=("/"+tempA[2]+"/"+tempA[3]); 
+		        	  		}
+		        	  		else {//꺾인 부분이 한군데인 경우; temp.length==3
+			        		  newPath+=("/"+tempA[2]);		              
+		        	  		}
+		        	  		break;
+		        	  	}
+			        	if(i<divided.length-2&&
+			        			divided[i].matches(tempB[0])&&divided[i+1].matches(tempB[1])
+				        		  &&divided[i+2].matches(tempB[2])) {
+				        	  
+			        		newPath+=("/"+tempB[3]+"/"+tempB[4]);
+				        	i++;
+				         }			       
 		          }
 		        }
 		        newPath+=("/"+divided[i+1]);
 		      }
-		       
+		      
 		      System.out.println("newPath="+path);
 		      return newPath;
-		   }
+		      }
+		   
 		  
 		  /*
 		   ***추가할 코너점은
 		   ***여기랑  nodeLocation.txt 파일에
 		   ***ex>인접노드1/인접노드2/코너점노드
 		   */
-		  private void addAllException(){
+		  private void addAexception(){
 			//B6F
-			exception.add("-6N1/-6E1/-6X1/-6X2");
-			exception.add("-6E1/-6N1/-6X2/-6X1");
+			exceptionA.add("-6N1/-6E1/-6X1/-6X2");
+			exceptionA.add("-6E1/-6N1/-6X2/-6X1");
 			//B5F
-			exception.add("-5N1/-5N2/-5X1");
-			exception.add("-5N2/-5N1/-5X1");
+			exceptionA.add("-5N1/-5N2/-5X1");
+			exceptionA.add("-5N2/-5N1/-5X1");
 			
-			exception.add("-5N2/-5E1/-5X2/-5X3");
-			exception.add("-5E1/-5N2/-5X3/-5X2");
+			exceptionA.add("-5N2/-5E1/-5X2/-5X3");
+			exceptionA.add("-5E1/-5N2/-5X3/-5X2");
 			  
 		    //1F
-		    exception.add("1N4/1N6/1X1");
-		    exception.add("1N6/1N4/1X1");
+		    exceptionA.add("1N4/1N6/1X1");
+		    exceptionA.add("1N6/1N4/1X1");
 		    
-		    exception.add("1N3/1N6/1X2");
-		    exception.add("1N6/1N3/1X2");
+		    exceptionA.add("1N3/1N6/1X2");
+		    exceptionA.add("1N6/1N3/1X2");
 		    
-		    exception.add("1N7/1E3/1X3");
-		    exception.add("1E3/1N7/1X3");
+		    exceptionA.add("1N7/1E3/1X3");
+		    exceptionA.add("1E3/1N7/1X3");
 		    
-		    exception.add( "1N7/1S2/1X3");
-		    exception.add( "1S2/1N7/1X3");
+		    exceptionA.add( "1N7/1S2/1X3");
+		    exceptionA.add( "1S2/1N7/1X3");
 		    
-		    exception.add( "1N7/1C1/1X3");
-		    exception.add( "1C1/1N7/1X3");
+		    exceptionA.add( "1N7/1C1/1X3");
+		    exceptionA.add( "1C1/1N7/1X3");
 		    
 		    //3F
-		    exception.add( "3N1/3N4/3X1");
-		    exception.add( "3N4/3N1/3X1");
+		    exceptionA.add( "3N1/3N4/3X1");
+		    exceptionA.add( "3N4/3N1/3X1");
 		    
-		    exception.add( "311/3N4/3X1");
-		    exception.add( "3N4/311/3X1");
+		    exceptionA.add( "311/3N4/3X1");
+		    exceptionA.add( "3N4/311/3X1");
 		    
-		    exception.add( "312/3N4/3X1");
-		    exception.add( "3N4/312/3X1");
+		    exceptionA.add( "312/3N4/3X1");
+		    exceptionA.add( "3N4/312/3X1");
 		    
-		    exception.add( "3N1/3N2/3X2");
-		    exception.add( "3N2/3N1/3X2");
+		    exceptionA.add( "3N1/3N2/3X2");
+		    exceptionA.add( "3N2/3N1/3X2");
 		    
-		    exception.add( "3N6/3N8/3X3");
-		    exception.add( "3N8/3N6/3X3");
+		    exceptionA.add( "3N6/3N8/3X3");
+		    exceptionA.add( "3N8/3N6/3X3");
 		    
-		    exception.add( "3S4/3N8/3X3");
-		    exception.add( "3N8/3S4/3X3");
+		    exceptionA.add( "3S4/3N8/3X3");
+		    exceptionA.add( "3N8/3S4/3X3");
 		    
-		    exception.add( "3S1/3N2/3X4");
-		    exception.add( "3N2/3S1/3X4");
+		    exceptionA.add( "3S1/3N2/3X4");
+		    exceptionA.add( "3N2/3S1/3X4");
 		    
-		    exception.add( "3N2/3N3/3X4");
-		    exception.add( "3N3/3N2/3X4");
+		    exceptionA.add( "3N2/3N3/3X4");
+		    exceptionA.add( "3N3/3N2/3X4");
 		    
 		    //4F
-		    exception.add( "4N1/4N4/4X1");
-		    exception.add( "4N4/4N1/4X1");
+		    exceptionA.add( "4N1/4N4/4X1");
+		    exceptionA.add( "4N4/4N1/4X1");
 		    
-		    exception.add( "414/4N4/4X1");
-		    exception.add( "4N4/414/4X1");
+		    exceptionA.add( "414/4N4/4X1");
+		    exceptionA.add( "4N4/414/4X1");
 		    
-		    exception.add( "4N2/4N6/4X2");
-		    exception.add( "4N6/4N2/4X2");
+		    exceptionA.add( "4N2/4N6/4X2");
+		    exceptionA.add( "4N6/4N2/4X2");
 		    
-		    exception.add( "4N2/4N3/4X3");
-		    exception.add( "4N3/4N2/4X3");
+		    exceptionA.add( "4N2/4N3/4X3");
+		    exceptionA.add( "4N3/4N2/4X3");
 		    
 		    //5F
-		    exception.add( "5N1/5N5/5X1");
-		    exception.add( "5N5/5N1/5X1");
+		    exceptionA.add( "5N1/5N5/5X1");
+		    exceptionA.add( "5N5/5N1/5X1");
 		    
-		    exception.add( "513/5N5/5X1");
-		    exception.add( "5N5/513/5X1");
+		    exceptionA.add( "513/5N5/5X1");
+		    exceptionA.add( "5N5/513/5X1");
 		    
-		    exception.add( "514/5N5/5X1");
-		    exception.add( "5N5/514/5X1");
+		    exceptionA.add( "514/5N5/5X1");
+		    exceptionA.add( "5N5/514/5X1");
 		    
-		    exception.add( "5N2/5N3/5X2");
-		    exception.add( "5N3/5N2/5X2");
+		    exceptionA.add( "5N2/5N3/5X2");
+		    exceptionA.add( "5N3/5N2/5X2");
 		    
-		    exception.add( "5N3/5N6/5X3");
-		    exception.add( "5N6/5N3/5X3");
+		    exceptionA.add( "5N3/5N6/5X3");
+		    exceptionA.add( "5N6/5N3/5X3");
 		    
-		    exception.add( "5N2/5N4/5X4");
-		    exception.add( "5N4/5N2/5X4");
+		    exceptionA.add( "5N2/5N4/5X4");
+		    exceptionA.add( "5N4/5N2/5X4");
 		    
 		    //6F
-		    exception.add( "6N1/6N6/6X1");
-		    exception.add( "6N6/6N1/6X1");
+		    exceptionA.add( "6N1/6N6/6X1");
+		    exceptionA.add( "6N6/6N1/6X1");
 		    
-		    exception.add( "612/6N6/6X1");
-		    exception.add( "6N6/612/6X1");
+		    exceptionA.add( "612/6N6/6X1");
+		    exceptionA.add( "6N6/612/6X1");
 		    
-		    exception.add( "613/6N6/6X1");
-		    exception.add( "6N6/613/6X1");
+		    exceptionA.add( "613/6N6/6X1");
+		    exceptionA.add( "6N6/613/6X1");
 		    
-		    exception.add( "6N4/6N7/6X2");
-		    exception.add( "6N7/6N4/6X2");
+		    exceptionA.add( "6N4/6N7/6X2");
+		    exceptionA.add( "6N7/6N4/6X2");
 		    
-		    exception.add( "6N2/6N5/6X3");
-		    exception.add( "6N5/6N2/6X3");
+		    exceptionA.add( "6N2/6N5/6X3");
+		    exceptionA.add( "6N5/6N2/6X3");
 		    
 		    //7F
-		    exception.add( "7N1/7N5/7X1");
-		    exception.add( "7N5/7N1/7X1");
+		    exceptionA.add( "7N1/7N5/7X1");
+		    exceptionA.add( "7N5/7N1/7X1");
 		    
-		    exception.add( "722/7N5/7X1");
-		    exception.add( "7N5/722/7X1");
+		    exceptionA.add( "722/7N5/7X1");
+		    exceptionA.add( "7N5/722/7X1");
 		    
-		    exception.add( "723/7N5/7X1");
-		    exception.add( "7N5/723/7X1");
+		    exceptionA.add( "723/7N5/7X1");
+		    exceptionA.add( "7N5/723/7X1");
 		    
-		    exception.add( "7N3/7N4/7X2");
-		    exception.add( "7N4/7N3/7X2");
+		    exceptionA.add( "7N3/7N4/7X2");
+		    exceptionA.add( "7N4/7N3/7X2");
 		    
 		    //8F
-		    exception.add( "8N1/8N5/8X1");
-		    exception.add( "8N5/8N1/8X1");
+		    exceptionA.add( "8N1/8N5/8X1");
+		    exceptionA.add( "8N5/8N1/8X1");
 		    
-		    exception.add( "819/8N5/8X1");
-		    exception.add( "8N5/819/8X1");
+		    exceptionA.add( "819/8N5/8X1");
+		    exceptionA.add( "8N5/819/8X1");
 		    
-		    exception.add("8N3/8N4/8X2");
-		    exception.add("8N4/8N3/8X2");
+		    exceptionA.add("8N3/8N4/8X2");
+		    exceptionA.add("8N4/8N3/8X2");
 		    
 		    //9F
-		    exception.add("9N1/9N4/9X1");
-		    exception.add("9N4/9N1/9X1");
+		    exceptionA.add("9N1/9N4/9X1");
+		    exceptionA.add("9N4/9N1/9X1");
 		    
-		    exception.add("921/9N4/9X1");
-		    exception.add("9N4/921/9X1");
+		    exceptionA.add("921/9N4/9X1");
+		    exceptionA.add("9N4/921/9X1");
 		    
-		    exception.add("922/9N4/9X1");
-		    exception.add("9N4/922/9X1");
+		    exceptionA.add("922/9N4/9X1");
+		    exceptionA.add("9N4/922/9X1");
 		    
-		    exception.add("9S1/9N5/9X2");
-		    exception.add("9N5/9S1/9X2");
+		    exceptionA.add("9S1/9N5/9X2");
+		    exceptionA.add("9N5/9S1/9X2");
 		    
-		    exception.add( "9N10/9N12/9X3");
-		    exception.add( "9N12/9N10/9X3");
+		    exceptionA.add( "9N10/9N12/9X3");
+		    exceptionA.add( "9N12/9N10/9X3");
+		  }
+		  
+		  //중앙계단 코너점
+		  private void addBexception() {
+			//3F 중앙계단
+			exceptionB.add("3S2/3N6/3S3/3B1/3B2");
+			exceptionB.add("3S3/3N7/3S2/3B2/3B1");
+			
+			//4F 중앙계단
+			exceptionB.add("4S2/4N12/4S3/4B1/4B2");
+			exceptionB.add("4S3/4N13/4S2/4B2/4B1");
+			
+			//6F 중앙계단
+			exceptionB.add("6S2/6N4/6S3/6B1/6B2");
+			exceptionB.add("6S3/6N5/6S2/6B2/6B1");
+			
+			//8F 중앙계단
+			exceptionB.add("8S2/8N9/8S3/8B1/8B2");
+			exceptionB.add("8S3/8N10/8N2/8B2/8B1");
+			  
 		  }
 		  
 		  
