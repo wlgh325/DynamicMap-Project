@@ -833,9 +833,9 @@ public class Graph {
 
       // path를 만드는 시작부분
 
-      for (int i = 0; startPointNode[i] != null; i++) {
+      for (int i = 0; startPointNode[i] != null && i< startPointNode.length; i++) {
 
-         for (int j = 0; endPointNode[j] != null; j++) {
+         for (int j = 0; endPointNode[j] != null && j < endPointNode.length; j++) {
 
             temp.push(startPointNode[i]);
 

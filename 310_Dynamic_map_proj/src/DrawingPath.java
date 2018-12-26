@@ -63,7 +63,16 @@ public class DrawingPath extends PApplet {
 	  }
 	  if (inIdx==0)  
 	  text.HighlightRF(magicFloor);
-	  if (pathDivided[outIdx].length>1) { //층에 표현할 노드가 1개 이하면 무시한다.
+	  if(pathDivided.length==1 && pathDivided[0].length==2) //층내 강의실간 이동일 경우
+	  {
+		  noFill(); strokeWeight(6);
+		  stroke(255,0,0);
+		  arc(finder.FindLocX(pathDivided[0][0]),finder.FindLocY(pathDivided[0][0]),30,30,0,2*PI);
+		  stroke(0,0,255);
+		  arc(finder.FindLocX(pathDivided[0][1]),finder.FindLocY(pathDivided[0][1]),30,30,0,2*PI);
+		  redraw();
+	  }
+	  else if (pathDivided[outIdx].length>1) { //층에 표현할 노드가 1개 이하면 무시한다.
 	    player.move(finder.FindLocX(pathDivided[outIdx][inIdx]), finder.FindLocY(pathDivided[outIdx][inIdx])
 	      , finder.FindLocX(pathDivided[outIdx][inIdx+1]), finder.FindLocY(pathDivided[outIdx][inIdx+1]), t);
 	  }
@@ -324,7 +333,13 @@ public class DrawingPath extends PApplet {
 		    else {
 		    String[] RunningFloors=floors.split(",");
 		    
-		    while (arrIdx<RunningFloors.length && floor<=9) {
+		    while (floor<=9) {
+		    	if(arrIdx >= RunningFloors.length) {
+		    		  fill(0);
+				      text(floor, 235+25*(i-6), 775);
+				      floor++;
+				      continue;
+		    	}
 		      if (RunningFloors[arrIdx].matches(Integer.toString(floor))) {
 		        fill(255, 0, 0); 
 		        arrIdx++;
