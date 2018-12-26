@@ -27,18 +27,4 @@
     <jdkPreference>preferJre</jdkPreference>
     <runtimeBits>64/32</runtimeBits>
   </jre>
-  <versionInfo>
-    <fileVersion>0.0.0.1</fileVersion>
-    <txtFileVersion>Ver 0.0.0.1</txtFileVersion>
-    <fileDescription>310네비게이션</fileDescription>
-    <copyright>융컴</copyright>
-    <productVersion>0.0.0.1</productVersion>
-    <txtProductVersion>Ver 0.0.0.1</txtProductVersion>
-    <productName>310map</productName>
-    <companyName>융컴</companyName>
-    <internalName>dynamicGraph</internalName>
-    <originalFilename>310map.exe</originalFilename>
-    <trademarks></trademarks>
-    <language>KOREAN</language>
-  </versionInfo>
 </launch4jConfig>
